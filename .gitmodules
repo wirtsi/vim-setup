@@ -46,3 +46,9 @@
 [submodule "bundle/vim-buftabline"]
 	path = bundle/vim-buftabline
 	url = git@github.com:ap/vim-buftabline.git
+[submodule "bundle/command-t"]
+	path = bundle/command-t
+	url = git@github.com:wincent/command-t.git
+[submodule "bundle/varnish-vcl"]
+	path = bundle/varnish-vcl
+	url = git@github.com:pld-linux/vim-syntax-vcl.git

@@ -24,6 +24,10 @@ else
   endif
   set showtabline=2
 endif
+" Set left and right option/alt keys to be meta keys
+if has("gui_macvim")
+    set macmeta
+endif
 set number
 let mapleader=" "
 map <leader>s :source ~/.vimrc<CR>
@@ -152,31 +156,34 @@ nmap <leader>jj :BuffergatorMruCyclePrev<cr>
 nmap <leader>kk :BuffergatorMruCycleNext<cr>
 
 " View the entire list of buffers open
-nmap <leader>b :BuffergatorOpen<cr>
+"nmap <leader>b :BuffergatorOpen<cr>
 
 " Shared bindings from Solution #1 from earlier
 nmap <leader>T :enew<cr>
 nmap <leader>bq :bp <BAR> bd #<cr>
 
+"Commant-T
+set wildignore+=*.log,*.sql,*.cache
+
 "Ctrl-P
 " Setup some default ignores
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/](\.(git|hg|svn)|\_site)$',
-  \ 'file': '\v\.(exe|so|dll|class|png|jpg|jpeg|log)$',
-\}
+"let g:ctrlp_custom_ignore = {
+  "\ 'dir':  '\v[\/](\.(git|hg|svn)|\_site)$',
+  "\ 'file': '\v\.(exe|so|dll|class|png|jpg|jpeg|log)$',
+"\}
 
-" Use the nearest .git directory as the cwd
-" This makes a lot of sense if you are working on a project that is in version
-" control. It also supports works with .svn, .hg, .bzr.
-let g:ctrlp_working_path_mode = 'r'
+"" Use the nearest .git directory as the cwd
+"" This makes a lot of sense if you are working on a project that is in version
+"" control. It also supports works with .svn, .hg, .bzr.
+"let g:ctrlp_working_path_mode = 'r'
 
-" Use a leader instead of the actual named binding
-nmap <leader>p :CtrlPMixed<cr>
+"" Use a leader instead of the actual named binding
+"nmap <leader>p :CtrlPMixed<cr>
 
-" Easy bindings for its various modes
-nmap <leader>pb :CtrlPBuffer<cr>
-nmap <leader>pf :CtrlP<cr>
-nmap <leader>br :CtrlPMRU<cr>
+"" Easy bindings for its various modes
+"nmap <leader>pb :CtrlPBuffer<cr>
+"nmap <leader>pf :CtrlP<cr>
+"nmap <leader>br :CtrlPMRU<cr>
 
 "rainbox_parenthesis -> https://github.com/kien/rainbow_parentheses.vim
 au VimEnter * RainbowParenthesesToggle
