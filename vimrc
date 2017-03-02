@@ -7,7 +7,8 @@ syntax on
 set encoding=utf-8
 scriptencoding utf-8
 
-colorscheme Tomorrow-Night-Eighties
+"colorscheme Tomorrow-Night-Eighties
+colorscheme Afterglow
 set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h18
 if has("gui_running")
   set lines=35 columns=150
@@ -30,6 +31,7 @@ if has("gui_macvim")
 endif
 set number
 let mapleader=" "
+"reload with Leader s
 map <leader>s :source ~/.vimrc<CR>
 set hidden
 set history=100
@@ -40,6 +42,7 @@ set shiftwidth=2
 set expandtab
 set smartindent
 set autoindent
+set list
 autocmd BufWritePre * :%s/\s\+$//e
 set hlsearch
 nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
@@ -56,7 +59,6 @@ map <D-A-DOWN> <C-w><C-w>
 map <D-A-UP> <C-w>W
 nnoremap <Leader><Leader> :e#<CR>
 set showmatch
-nnoremap <Leader>r :bro ol<CR>
 
 "lightline -> https://github.com/itchyny/lightline.vim
 set laststatus=2
@@ -127,8 +129,9 @@ autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 let NERDTreeMapActivateNode='<right>'
 let NERDTreeShowHidden=1
+"show current file in nerdtree
 nmap <leader>j :NERDTreeFind<CR>
-let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp']
+let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp','/target']
 "supertap -> https://github.com/ervandew/supertab
 
 "fugitive -> https://github.com/tpope/vim-fugitive
@@ -156,14 +159,15 @@ nmap <leader>jj :BuffergatorMruCyclePrev<cr>
 nmap <leader>kk :BuffergatorMruCycleNext<cr>
 
 " View the entire list of buffers open
-"nmap <leader>b :BuffergatorOpen<cr>
+nmap <leader>bg :BuffergatorOpen<cr>
 
 " Shared bindings from Solution #1 from earlier
 nmap <leader>T :enew<cr>
 nmap <leader>bq :bp <BAR> bd #<cr>
 
-"Commant-T
-set wildignore+=*.log,*.sql,*.cache
+"Command-T
+nnoremap <leader>r :CommandTMRU<CR>
+set wildignore+=*.log,*.sql,*.cache,target
 
 "Ctrl-P
 " Setup some default ignores
@@ -194,8 +198,8 @@ au Syntax * RainbowParenthesesLoadChevrons
 
 "buftabline
 " remap arrow keys
-nnoremap <Left> :bprev<CR>
-nnoremap <Right> :bnext<CR>
+"nnoremap <Left> :bprev<CR>
+"nnoremap <Right> :bnext<CR>
 nmap <D-1> <Plug>BufTabLine.Go(1)
 nmap <D-2> <Plug>BufTabLine.Go(2)
 nmap <D-3> <Plug>BufTabLine.Go(3)
