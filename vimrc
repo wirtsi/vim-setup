@@ -26,9 +26,9 @@ else
   set showtabline=2
 endif
 " Set left and right option/alt keys to be meta keys
-if has("gui_macvim")
-    set macmeta
-endif
+"if has("gui_macvim")
+"    set macmeta
+"endif
 set number
 let mapleader=" "
 "reload with Leader s
@@ -132,6 +132,12 @@ let NERDTreeShowHidden=1
 "show current file in nerdtree
 nmap <leader>j :NERDTreeFind<CR>
 let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp','/target']
+"disable some stuff in nerdtree window
+autocmd FileType nerdtree noremap <buffer> <C-Tab> <nop>
+autocmd FileType nerdtree noremap <buffer> <C-S-Tab> <nop>
+autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
+autocmd FileType nerdtree noremap <buffer> <leader>t <nop>
+autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
 "supertap -> https://github.com/ervandew/supertab
 
 "fugitive -> https://github.com/tpope/vim-fugitive
@@ -169,25 +175,6 @@ nmap <leader>bq :bp <BAR> bd #<cr>
 nnoremap <leader>r :CommandTMRU<CR>
 set wildignore+=*.log,*.sql,*.cache,target
 
-"Ctrl-P
-" Setup some default ignores
-"let g:ctrlp_custom_ignore = {
-  "\ 'dir':  '\v[\/](\.(git|hg|svn)|\_site)$',
-  "\ 'file': '\v\.(exe|so|dll|class|png|jpg|jpeg|log)$',
-"\}
-
-"" Use the nearest .git directory as the cwd
-"" This makes a lot of sense if you are working on a project that is in version
-"" control. It also supports works with .svn, .hg, .bzr.
-"let g:ctrlp_working_path_mode = 'r'
-
-"" Use a leader instead of the actual named binding
-"nmap <leader>p :CtrlPMixed<cr>
-
-"" Easy bindings for its various modes
-"nmap <leader>pb :CtrlPBuffer<cr>
-"nmap <leader>pf :CtrlP<cr>
-"nmap <leader>br :CtrlPMRU<cr>
 
 "rainbox_parenthesis -> https://github.com/kien/rainbow_parentheses.vim
 au VimEnter * RainbowParenthesesToggle
@@ -200,6 +187,13 @@ au Syntax * RainbowParenthesesLoadChevrons
 " remap arrow keys
 "nnoremap <Left> :bprev<CR>
 "nnoremap <Right> :bnext<CR>
+
+"iterm doesn allow this
+if has("gui_macvim")
+  map <C-Tab> :bnext<cr>
+  map <C-S-Tab> :bprevious<cr>
+endif
+
 nmap <D-1> <Plug>BufTabLine.Go(1)
 nmap <D-2> <Plug>BufTabLine.Go(2)
 nmap <D-3> <Plug>BufTabLine.Go(3)
