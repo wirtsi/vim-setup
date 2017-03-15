@@ -49,6 +49,6 @@
 [submodule "bundle/command-t"]
 	path = bundle/command-t
 	url = git@github.com:wincent/command-t.git
-[submodule "bundle/varnish-vcl"]
-	path = bundle/varnish-vcl
+[submodule "bundle/vim-syntax-vcl"]
+	path = bundle/vim-syntax-vcl
 	url = git@github.com:pld-linux/vim-syntax-vcl.git

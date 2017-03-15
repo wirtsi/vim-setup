@@ -9,7 +9,7 @@ scriptencoding utf-8
 
 "colorscheme Tomorrow-Night-Eighties
 colorscheme Afterglow
-set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h18
+set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
 if has("gui_running")
   set lines=35 columns=150
   set colorcolumn=90
@@ -25,10 +25,6 @@ else
   endif
   set showtabline=2
 endif
-" Set left and right option/alt keys to be meta keys
-"if has("gui_macvim")
-"    set macmeta
-"endif
 set number
 let mapleader=" "
 "reload with Leader s
@@ -42,7 +38,12 @@ set shiftwidth=2
 set expandtab
 set smartindent
 set autoindent
-set list
+"show end of line
+"set list
+"select blocks with %
+noremap % v%
+set showmatch
+set matchtime=3
 autocmd BufWritePre * :%s/\s\+$//e
 set hlsearch
 nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
