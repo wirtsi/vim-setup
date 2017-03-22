@@ -25,6 +25,9 @@ else
   endif
   set showtabline=2
 endif
+set backupdir=~/.vim/backup_files//
+set directory=~/.vim/swap_files//
+set undodir=~/.vim/undo_files//
 set number
 let mapleader=" "
 "reload with Leader s
@@ -38,10 +41,11 @@ set shiftwidth=2
 set expandtab
 set smartindent
 set autoindent
+set autowrite
 "show end of line
 "set list
 "select blocks with %
-noremap % v%
+"noremap % v%
 set showmatch
 set matchtime=3
 autocmd BufWritePre * :%s/\s\+$//e
@@ -186,8 +190,8 @@ au Syntax * RainbowParenthesesLoadChevrons
 
 "buftabline
 " remap arrow keys
-"nnoremap <Left> :bprev<CR>
-"nnoremap <Right> :bnext<CR>
+nnoremap <Left> :bprev<CR>
+nnoremap <Right> :bnext<CR>
 
 "iterm doesn allow this
 if has("gui_macvim")
