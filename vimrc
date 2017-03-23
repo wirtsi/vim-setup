@@ -41,9 +41,17 @@ set shiftwidth=2
 set expandtab
 set smartindent
 set autoindent
+set copyindent    " copy the previous indentation on autoindenting
 set autowrite
+set shiftround    " use multiple of shiftwidth when indenting with '<' and '>
+set showmatch
+set smarttab      " insert tabs on the start of a line according to
+                    "    shiftwidth, not tabstop
+set incsearch     " show search matches as you type
 "show end of line
-"set list
+set list
+set listchars=tab:>.,trail:.,extends:#,nbsp:.
+autocmd filetype html,xml set listchars-=tab:>.
 "select blocks with %
 "noremap % v%
 set showmatch
@@ -63,7 +71,6 @@ map <D-A-LEFT> <C-w>h
 map <D-A-DOWN> <C-w><C-w>
 map <D-A-UP> <C-w>W
 nnoremap <Leader><Leader> :e#<CR>
-set showmatch
 
 "lightline -> https://github.com/itchyny/lightline.vim
 set laststatus=2
@@ -190,8 +197,15 @@ au Syntax * RainbowParenthesesLoadChevrons
 
 "buftabline
 " remap arrow keys
-nnoremap <Left> :bprev<CR>
-nnoremap <Right> :bnext<CR>
+"nnoremap <Left> :bprev<CR>
+"nnoremap <Right> :bnext<CR>
+map <leader><Left> :bprev<CR>
+map <leader><Right> :bnext<CR>
+"nnoremap <C-Left> :bprev<CR>
+"nnoremap <C-Right> :bnext<CR>
+"nnoremap <C-Up> <C-U>
+"nnoremap <C-Down> <C-D>
+
 
 "iterm doesn allow this
 if has("gui_macvim")
