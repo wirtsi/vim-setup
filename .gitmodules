@@ -52,3 +52,9 @@
 [submodule "bundle/vim-syntax-vcl"]
 	path = bundle/vim-syntax-vcl
 	url = git@github.com:pld-linux/vim-syntax-vcl.git
+[submodule "bundle/vim-move"]
+	path = bundle/vim-move
+	url = git@github.com:matze/vim-move.git
+[submodule "bundle/tabular"]
+	path = bundle/tabular
+	url = git://github.com/godlygeek/tabular.git

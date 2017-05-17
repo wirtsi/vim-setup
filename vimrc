@@ -7,8 +7,8 @@ syntax on
 set encoding=utf-8
 scriptencoding utf-8
 
-"colorscheme Tomorrow-Night-Eighties
-colorscheme Afterglow
+colorscheme Tomorrow-Night-Eighties
+"colorscheme Afterglow
 set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
 if has("gui_running")
   set lines=35 columns=150
@@ -39,7 +39,7 @@ set nowrap
 set tabstop=2
 set shiftwidth=2
 set expandtab
-set smartindent
+set nosmartindent
 set autoindent
 set copyindent    " copy the previous indentation on autoindenting
 set autowrite
@@ -71,6 +71,22 @@ map <D-A-LEFT> <C-w>h
 map <D-A-DOWN> <C-w><C-w>
 map <D-A-UP> <C-w>W
 nnoremap <Leader><Leader> :e#<CR>
+
+"vim-move
+let g:move_key_modifier = 'C'
+
+
+"Open vimgrep and put the cursor in the right position:
+map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
+
+"When you search with vimgrep, display your results in cope by doing: <leader>gc
+"To go to the next search result do: <leader>n
+"To go to the previous search results do: <leader>p
+"Vimscript mappings:
+map <leader>gc :botright cope<cr>
+map <leader>go ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
+map <leader>gn :cn<cr>
+map <leader>gp :cp<cr>
 
 "lightline -> https://github.com/itchyny/lightline.vim
 set laststatus=2
@@ -223,3 +239,11 @@ nmap <D-7> <Plug>BufTabLine.Go(7)
 nmap <D-8> <Plug>BufTabLine.Go(8)
 nmap <D-9> <Plug>BufTabLine.Go(9)
 nmap <D-0> <Plug>BufTabLine.Go(10)
+
+"Auto align = or :
+if exists(":Tabularize")
+  nmap <Leader>a= :Tabularize /=<CR>
+  vmap <Leader>a= :Tabularize /=<CR>
+  nmap <Leader>a: :Tabularize /:\zs<CR>
+  vmap <Leader>a: :Tabularize /:\zs<CR>
+endif
