@@ -7,6 +7,8 @@ syntax on
 set encoding=utf-8
 scriptencoding utf-8
 
+"vim-dispatch doesn't like fish
+set shell=/bin/bash
 colorscheme Tomorrow-Night-Eighties
 "colorscheme Afterglow
 set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
@@ -84,7 +86,6 @@ map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
 "To go to the previous search results do: <leader>p
 "Vimscript mappings:
 map <leader>gc :botright cope<cr>
-map <leader>go ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
 map <leader>gn :cn<cr>
 map <leader>gp :cp<cr>
 
@@ -153,7 +154,7 @@ function! LightlineMode()
 endfunction
 "nerdtree -> https://github.com/scrooloose/nerdtree
 map <Leader>n :NERDTreeToggle<CR>
-autocmd StdinReadPre * let s:std_in=1
+"autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 let NERDTreeMapActivateNode='<right>'
 let NERDTreeShowHidden=1
@@ -240,10 +241,11 @@ nmap <D-8> <Plug>BufTabLine.Go(8)
 nmap <D-9> <Plug>BufTabLine.Go(9)
 nmap <D-0> <Plug>BufTabLine.Go(10)
 
+"dash
+nmap <silent> <leader>d <Plug>DashSearch
+
 "Auto align = or :
-if exists(":Tabularize")
-  nmap <Leader>a= :Tabularize /=<CR>
-  vmap <Leader>a= :Tabularize /=<CR>
-  nmap <Leader>a: :Tabularize /:\zs<CR>
-  vmap <Leader>a: :Tabularize /:\zs<CR>
-endif
+nmap <Leader>t= :Tabularize /=<CR>
+vmap <Leader>t= :Tabularize /=<CR>
+nmap <Leader>t: :Tabularize /:\zs<CR>
+vmap <Leader>t: :Tabularize /:\zs<CR>
