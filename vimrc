@@ -7,8 +7,10 @@ syntax on
 set encoding=utf-8
 scriptencoding utf-8
 
-"vim-dispatch doesn't like fish
-set shell=/bin/bash
+
+"fzf integration
+set rtp+=/usr/local/opt/fzf
+
 colorscheme Tomorrow-Night-Eighties
 "colorscheme Afterglow
 set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
@@ -54,8 +56,6 @@ set incsearch     " show search matches as you type
 set list
 set listchars=tab:>.,trail:.,extends:#,nbsp:.
 autocmd filetype html,xml set listchars-=tab:>.
-"select blocks with %
-"noremap % v%
 set showmatch
 set matchtime=3
 autocmd BufWritePre * :%s/\s\+$//e
@@ -72,9 +72,8 @@ map <D-A-RIGHT> <C-w>l
 map <D-A-LEFT> <C-w>h
 map <D-A-DOWN> <C-w><C-w>
 map <D-A-UP> <C-w>W
-nnoremap <Leader><Leader> :e#<CR>
 
-"vim-move
+"vim-move -> https://github.com/matze/vim-move
 let g:move_key_modifier = 'C'
 
 
@@ -152,6 +151,7 @@ endfunction
 function! LightlineMode()
   return winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
+
 "nerdtree -> https://github.com/scrooloose/nerdtree
 map <Leader>n :NERDTreeToggle<CR>
 "autocmd StdinReadPre * let s:std_in=1
@@ -187,6 +187,8 @@ let g:buffergator_suppress_keymaps = 1
 " Looper buffers
 "let g:buffergator_mru_cycle_loop = 1
 
+" toggle between last buffers
+nnoremap <Leader><Leader> :e#<CR>
 " Go to the previous buffer open
 nmap <leader>jj :BuffergatorMruCyclePrev<cr>
 
@@ -200,29 +202,11 @@ nmap <leader>bg :BuffergatorOpen<cr>
 nmap <leader>T :enew<cr>
 nmap <leader>bq :bp <BAR> bd #<cr>
 
-"Command-T
-nnoremap <leader>r :CommandTMRU<CR>
-set wildignore+=*.log,*.sql,*.cache,target
-
-
-"rainbox_parenthesis -> https://github.com/kien/rainbow_parentheses.vim
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
-au Syntax * RainbowParenthesesLoadChevrons
-
-"buftabline
+"buftabline -> https://github.com/ap/vim-buftabline
+" this renders the buffers on the tabline
 " remap arrow keys
-"nnoremap <Left> :bprev<CR>
-"nnoremap <Right> :bnext<CR>
 map <leader><Left> :bprev<CR>
 map <leader><Right> :bnext<CR>
-"nnoremap <C-Left> :bprev<CR>
-"nnoremap <C-Right> :bnext<CR>
-"nnoremap <C-Up> <C-U>
-"nnoremap <C-Down> <C-D>
-
 
 "iterm doesn allow this
 if has("gui_macvim")
@@ -241,7 +225,26 @@ nmap <D-8> <Plug>BufTabLine.Go(8)
 nmap <D-9> <Plug>BufTabLine.Go(9)
 nmap <D-0> <Plug>BufTabLine.Go(10)
 
-"dash
+"Command-T <defunct>
+"nnoremap <leader>r :CommandTMRU<CR>
+"set wildignore+=*.log,*.sql,*.cache,target
+
+"zfz.vim -> https://github.com/junegunn/fzf.vim
+nnoremap <leader>t :Files<cr>
+nnoremap <leader>b :Buffers<cr>
+nnoremap <leader>r :History:<cr>
+
+"rainbox_parenthesis -> https://github.com/kien/rainbow_parentheses.vim
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+au Syntax * RainbowParenthesesLoadChevrons
+
+
+
+
+"dash -> https://github.com/rizzatti/dash.vim
 nmap <silent> <leader>d <Plug>DashSearch
 
 "Auto align = or :
@@ -249,3 +252,7 @@ nmap <Leader>t= :Tabularize /=<CR>
 vmap <Leader>t= :Tabularize /=<CR>
 nmap <Leader>t: :Tabularize /:\zs<CR>
 vmap <Leader>t: :Tabularize /:\zs<CR>
+
+"vim-dispatch -> https://github.com/tpope/vim-dispatch
+"vim-dispatch doesn't like fish
+set shell=/bin/bash
