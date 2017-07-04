@@ -1,8 +1,8 @@
 "http://marcgg.com/blog/2016/03/01/vimrc-example/
 execute pathogen#infect()
 set nocompatible
-filetype on
-filetype plugin on
+filetype off
+"filetype plugin on
 syntax on
 set encoding=utf-8
 scriptencoding utf-8
@@ -13,10 +13,12 @@ set rtp+=/usr/local/opt/fzf
 
 colorscheme Tomorrow-Night-Eighties
 "colorscheme Afterglow
-"if !has("gui_vimr")
+if !has("gui_vimr")
   ""Here goes some VimR specific settings like
-  "set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
-"endif
+  set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
+endif
+
+set clipboard=unnamed
 
 
 set backupdir=~/.vim/backup_files//
@@ -69,15 +71,7 @@ let g:move_key_modifier = 'C'
 
 
 "Open vimgrep and put the cursor in the right position:
-map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
-
-"When you search with vimgrep, display your results in cope by doing: <leader>gc
-"To go to the next search result do: <leader>n
-"To go to the previous search results do: <leader>p
-"Vimscript mappings:
-map <leader>gc :botright cope<cr>
-map <leader>gn :cn<cr>
-map <leader>gp :cp<cr>
+map <leader>g :Ag<space>
 
 "lightline -> https://github.com/itchyny/lightline.vim
 set laststatus=2
