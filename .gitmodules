@@ -46,9 +46,6 @@
 [submodule "bundle/vim-buftabline"]
 	path = bundle/vim-buftabline
 	url = git@github.com:ap/vim-buftabline.git
-[submodule "bundle/command-t"]
-	path = bundle/command-t
-	url = https://github.com/wincent/command-t
 [submodule "bundle/vim-syntax-vcl"]
 	path = bundle/vim-syntax-vcl
 	url = git@github.com:pld-linux/vim-syntax-vcl.git
@@ -67,3 +64,6 @@
 [submodule "bundle/vim-dispatch"]
 	path = bundle/vim-dispatch
 	url = https://github.com/tpope/vim-dispatch
+[submodule "bundle/fzf.vim"]
+	path = bundle/fzf.vim
+	url = https://github.com/junegunn/fzf.vim

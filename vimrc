@@ -13,25 +13,16 @@ set rtp+=/usr/local/opt/fzf
 
 colorscheme Tomorrow-Night-Eighties
 "colorscheme Afterglow
-set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
-if has("gui_running")
-  set lines=35 columns=150
-  set colorcolumn=90
-  set guioptions+=e  " instead of clearing this, set it to only `e`
-  set showtabline=2 " one is the default value
-else
-  " This is console Vim.
-  if exists("+lines")
-    set lines=50
-  endif
-  if exists("+columns")
-    set columns=100
-  endif
-  set showtabline=2
-endif
+"if !has("gui_vimr")
+  ""Here goes some VimR specific settings like
+  "set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
+"endif
+
+
 set backupdir=~/.vim/backup_files//
 set directory=~/.vim/swap_files//
 set undodir=~/.vim/undo_files//
+
 set number
 let mapleader=" "
 "reload with Leader s
@@ -226,8 +217,14 @@ nmap <D-9> <Plug>BufTabLine.Go(9)
 nmap <D-0> <Plug>BufTabLine.Go(10)
 
 "Command-T
-nnoremap <leader>r :CommandTMRU<CR>
-set wildignore+=*.log,*.sql,*.cache,target
+"nnoremap <leader>r :CommandTMRU<CR>
+"set wildignore+=*.log,*.sql,*.cache,target
+
+"zfz.vim -> https://github.com/junegunn/fzf.vim
+nnoremap <leader>t :Files<cr>
+nnoremap <leader>b :Buffers<cr>
+nnoremap <leader>r :History<cr>
+
 
 "rainbox_parenthesis -> https://github.com/kien/rainbow_parentheses.vim
 au VimEnter * RainbowParenthesesToggle
@@ -235,9 +232,6 @@ au Syntax * RainbowParenthesesLoadRound
 au Syntax * RainbowParenthesesLoadSquare
 au Syntax * RainbowParenthesesLoadBraces
 au Syntax * RainbowParenthesesLoadChevrons
-
-
-
 
 "dash -> https://github.com/rizzatti/dash.vim
 nmap <silent> <leader>d <Plug>DashSearch
