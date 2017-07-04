@@ -225,14 +225,9 @@ nmap <D-8> <Plug>BufTabLine.Go(8)
 nmap <D-9> <Plug>BufTabLine.Go(9)
 nmap <D-0> <Plug>BufTabLine.Go(10)
 
-"Command-T <defunct>
-"nnoremap <leader>r :CommandTMRU<CR>
-"set wildignore+=*.log,*.sql,*.cache,target
-
-"zfz.vim -> https://github.com/junegunn/fzf.vim
-nnoremap <leader>t :Files<cr>
-nnoremap <leader>b :Buffers<cr>
-nnoremap <leader>r :History:<cr>
+"Command-T
+nnoremap <leader>r :CommandTMRU<CR>
+set wildignore+=*.log,*.sql,*.cache,target
 
 "rainbox_parenthesis -> https://github.com/kien/rainbow_parentheses.vim
 au VimEnter * RainbowParenthesesToggle

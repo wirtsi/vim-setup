@@ -48,7 +48,7 @@
 	url = git@github.com:ap/vim-buftabline.git
 [submodule "bundle/command-t"]
 	path = bundle/command-t
-	url = git@github.com:wincent/command-t.git
+	url = https://github.com/wincent/command-t
 [submodule "bundle/vim-syntax-vcl"]
 	path = bundle/vim-syntax-vcl
 	url = git@github.com:pld-linux/vim-syntax-vcl.git
@@ -58,6 +58,12 @@
 [submodule "bundle/tabular"]
 	path = bundle/tabular
 	url = git://github.com/godlygeek/tabular.git
-[submodule "bundle/fzf.vim"]
-	path = bundle/fzf.vim
-	url = https://github.com/junegunn/fzf.vim
+[submodule "bundle/vim-polyglot"]
+	path = bundle/vim-polyglot
+	url = https://github.com/sheerun/vim-polyglot
+[submodule "bundle/dash.vim"]
+	path = bundle/dash.vim
+	url = https://github.com/rizzatti/dash.vim
+[submodule "bundle/vim-dispatch"]
+	path = bundle/vim-dispatch
+	url = https://github.com/tpope/vim-dispatch
