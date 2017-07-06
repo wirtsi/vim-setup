@@ -1,3 +1,4 @@
 backup_files/*
 undo_files/*
 swap_files/*
+plugged/

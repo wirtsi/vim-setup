@@ -1,9 +1,22 @@
-"http://marcgg.com/blog/2016/03/01/vimrc-example/
-execute pathogen#infect()
+call plug#begin('~/.vim/plugged')
+  Plug 'junegunn/fzf.vim'
+  Plug 'scrooloose/nerdtree'
+  Plug 'https://github.com/itchyny/lightline.vim'
+  Plug 'rizzatti/dash.vim'
+  Plug 'tpope/vim-fugitive'
+  Plug 'scrooloose/nerdcommenter'
+  Plug 'Xuyuanp/nerdtree-git-plugin'
+  Plug 'luochen1990/rainbow'
+  Plug 'godlygeek/tabular'
+  Plug 'ap/vim-buftabline'
+  Plug 'airblade/vim-gitgutter'
+  Plug 'matze/vim-move'
+  Plug 'terryma/vim-multiple-cursors'
+  Plug 'sheerun/vim-polyglot'
+  Plug 'jeetsukumaran/vim-buffergator'
+call plug#end()
+
 set nocompatible
-filetype off
-"filetype plugin on
-syntax on
 set encoding=utf-8
 scriptencoding utf-8
 
@@ -16,8 +29,10 @@ colorscheme Tomorrow-Night-Eighties
 if !has("gui_vimr")
   ""Here goes some VimR specific settings like
   set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
+  set termguicolors
 endif
 
+"clipboard sharing with osx
 set clipboard=unnamed
 
 
@@ -31,7 +46,7 @@ let mapleader=" "
 map <leader>s :source ~/.vimrc<CR>
 set hidden
 set history=100
-filetype indent on
+"filetype indent on
 set nowrap
 set tabstop=2
 set shiftwidth=2
@@ -109,7 +124,7 @@ function! LightlineFilename()
         \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
         \  &ft == 'unite' ? unite#get_status_string() :
         \  &ft == 'vimshell' ? vimshell#get_status_string() :
-        \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+        \ '' != expand('%:t') ? fnamemodify(expand("%"), ":~:.") : '[No Name]') .
         \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
 endfunction
 
@@ -193,6 +208,14 @@ nmap <leader>bq :bp <BAR> bd #<cr>
 map <leader><Left> :bprev<CR>
 map <leader><Right> :bnext<CR>
 
+if exists(':tnoremap')
+  "Terminal Mode mapping
+  tnoremap <Esc> <C-\><C-n>
+  tnoremap <leader><Left> <C-\><C-N>:bprev<CR>
+  tnoremap <leader><Right> <C-\><C-N>:bnext<CR>
+  tnoremap <leader>bq <C-\><C-N>:bd!<cr>
+endif
+
 "iterm doesn allow this
 if has("gui_macvim")
   map <C-Tab> :bnext<cr>
@@ -210,22 +233,36 @@ nmap <D-8> <Plug>BufTabLine.Go(8)
 nmap <D-9> <Plug>BufTabLine.Go(9)
 nmap <D-0> <Plug>BufTabLine.Go(10)
 
-"Command-T
-"nnoremap <leader>r :CommandTMRU<CR>
-"set wildignore+=*.log,*.sql,*.cache,target
-
 "zfz.vim -> https://github.com/junegunn/fzf.vim
 nnoremap <leader>t :Files<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>r :History<cr>
 
 
-"rainbox_parenthesis -> https://github.com/kien/rainbow_parentheses.vim
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
-au Syntax * RainbowParenthesesLoadChevrons
+"rainbox_parenthesis -> https://github.com/luochen1990/rainbow
+let g:rainbow_active = 1
+	let g:rainbow_conf = {
+	\	'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+	\	'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+	\	'operators': '_,_',
+	\	'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+	\	'separately': {
+	\		'*': {},
+	\		'tex': {
+	\			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
+	\		},
+	\		'lisp': {
+	\			'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
+	\		},
+	\		'vim': {
+	\			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+	\		},
+	\		'html': {
+	\			'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+	\		},
+	\		'css': 0,
+	\	}
+	\}
 
 "dash -> https://github.com/rizzatti/dash.vim
 nmap <silent> <leader>d <Plug>DashSearch
