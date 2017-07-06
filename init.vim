@@ -1,1 +1,1 @@
-/Users/fkrause/.vim/vimrc
+vimrc

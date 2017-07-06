@@ -1,5 +1,5 @@
 call plug#begin('~/.vim/plugged')
-  Plug 'junegunn/fzf.vim'
+"  Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'https://github.com/itchyny/lightline.vim'
   Plug 'rizzatti/dash.vim'
@@ -14,6 +14,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'terryma/vim-multiple-cursors'
   Plug 'sheerun/vim-polyglot'
   Plug 'jeetsukumaran/vim-buffergator'
+  Plug 'w0rp/ale'
 call plug#end()
 
 set nocompatible
@@ -94,7 +95,8 @@ let g:lightline = {
       \ 'colorscheme': 'landscape',
       \ 'mode_map': { 'c': 'NORMAL' },
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
+      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+      \   'right': [ ['linter'] ]
       \ },
       \ 'component_function': {
       \   'modified': 'LightlineModified',
@@ -104,7 +106,8 @@ let g:lightline = {
       \   'fileformat': 'LightlineFileformat',
       \   'filetype': 'LightlineFiletype',
       \   'fileencoding': 'LightlineFileencoding',
-      \   'mode': 'LightlineMode'
+      \   'mode': 'LightlineMode',
+      \   'linter' : 'LightlineLinterStatus'
       \ },
       \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
       \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
@@ -151,6 +154,21 @@ endfunction
 function! LightlineMode()
   return winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
+
+
+function! LightlineLinterStatus()
+    let l:counts = ale#statusline#Count(bufnr(''))
+
+    let l:all_errors = l:counts.error + l:counts.style_error
+    let l:all_non_errors = l:counts.total - l:all_errors
+
+    return l:counts.total == 0 ? 'OK' : printf(
+    \   '%dW %dE',
+    \   all_non_errors,
+    \   all_errors
+    \)
+endfunction
+
 
 "nerdtree -> https://github.com/scrooloose/nerdtree
 map <Leader>n :NERDTreeToggle<CR>
@@ -276,3 +294,8 @@ vmap <Leader>t: :Tabularize /:\zs<CR>
 "vim-dispatch -> https://github.com/tpope/vim-dispatch
 "vim-dispatch doesn't like fish
 set shell=/bin/bash
+
+"ale -> https://github.com/w0rp/ale
+" Write this in your vimrc file
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1

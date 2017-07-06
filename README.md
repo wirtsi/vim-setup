@@ -1,10 +1,8 @@
 # VIM
-My setup of VIM. Please refer to the [vimrc](vimrc) file for more info
+Clone this under ~/.config/nvim
 
-After cloning
-git checkout dev
-git submodule init
-git submodule update
+Start and run :PlugInstall
+
 
 It needs
 neovim the_silver_searcher fzf (install via brew)
