@@ -1,5 +1,5 @@
 call plug#begin('~/.vim/plugged')
-"  Plug 'junegunn/fzf.vim'
+  Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'https://github.com/itchyny/lightline.vim'
   Plug 'rizzatti/dash.vim'
@@ -15,12 +15,14 @@ call plug#begin('~/.vim/plugged')
   Plug 'sheerun/vim-polyglot'
   Plug 'jeetsukumaran/vim-buffergator'
   Plug 'w0rp/ale'
+  Plug 'octref/RootIgnore'
+  "Plug 'ervandew/supertab'
 call plug#end()
 
 set nocompatible
 set encoding=utf-8
 scriptencoding utf-8
-
+set noshowmode
 
 "fzf integration
 set rtp+=/usr/local/opt/fzf
@@ -175,7 +177,9 @@ map <Leader>n :NERDTreeToggle<CR>
 "autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 let NERDTreeMapActivateNode='<right>'
-let NERDTreeShowHidden=1
+let NERDTreeShowHidden=0
+let loaded_netrwPlugin=1
+let NERDTreeRespectWildIgnore=1
 "show current file in nerdtree
 nmap <leader>j :NERDTreeFind<CR>
 let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp','/target']
@@ -185,6 +189,9 @@ autocmd FileType nerdtree noremap <buffer> <C-S-Tab> <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>t <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
+autocmd FileType nerdtree noremap <buffer> <leader><Left> <nop>
+autocmd FileType nerdtree noremap <buffer> <leader><Right> <nop>
+
 "supertap -> https://github.com/ervandew/supertab
 
 "fugitive -> https://github.com/tpope/vim-fugitive
