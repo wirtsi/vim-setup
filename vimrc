@@ -2,7 +2,9 @@ call plug#begin('~/.vim/plugged')
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'https://github.com/itchyny/lightline.vim'
+  "Plug 'ervandew/supertab'
   Plug 'rizzatti/dash.vim'
+  Plug 'Shougo/deoplete.nvim'
   Plug 'tpope/vim-fugitive'
   Plug 'scrooloose/nerdcommenter'
   Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -16,10 +18,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'jeetsukumaran/vim-buffergator'
   Plug 'w0rp/ale'
   Plug 'octref/RootIgnore'
-  "Plug 'ervandew/supertab'
 call plug#end()
 
-set nocompatible
 set encoding=utf-8
 scriptencoding utf-8
 set noshowmode
@@ -29,46 +29,42 @@ set rtp+=/usr/local/opt/fzf
 
 colorscheme Tomorrow-Night-Eighties
 "colorscheme Afterglow
-if !has("gui_vimr")
-  ""Here goes some VimR specific settings like
-  "set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
-  set guifont=Inconsolata\ for\ Powerline:h20
+if has("nvim")
+  ""Here goes some neovim specific settings like
   let g:Powerline_symbols = 'fancy'
   set termguicolors
-  set fillchars+=stl:\ ,stlnc:\
 endif
 
 "clipboard sharing with osx
 set clipboard=unnamed
 
 
-set backupdir=~/.vim/backup_files//
-set directory=~/.vim/swap_files//
-set undodir=~/.vim/undo_files//
+"set backupdir=~/.vim/backup_files//
+"set directory=~/.vim/swap_files//
+"set undodir=~/.vim/undo_files//
 
 set number
 let mapleader=" "
 "reload with Leader s
 map <leader>s :source ~/.vimrc<CR>
 set hidden
-set history=100
-"filetype indent on
+filetype indent on
 set nowrap
 set tabstop=2
 set shiftwidth=2
 set expandtab
-set nosmartindent
+"set nosmartindent
 set autoindent
 set copyindent    " copy the previous indentation on autoindenting
 set autowrite
 set shiftround    " use multiple of shiftwidth when indenting with '<' and '>
 set showmatch
 set smarttab      " insert tabs on the start of a line according to
-                    "    shiftwidth, not tabstop
+                       "shiftwidth, not tabstop
 set incsearch     " show search matches as you type
 "show end of line
 set list
-set listchars=tab:>.,trail:.,extends:#,nbsp:.
+"set listchars=tab:>.,trail:.,extends:#,nbsp:.
 autocmd filetype html,xml set listchars-=tab:>.
 set showmatch
 set matchtime=3
@@ -92,10 +88,10 @@ let g:move_key_modifier = 'C'
 
 
 "Open vimgrep and put the cursor in the right position:
-map <leader>g :Ag<space>
+map <leader>g :Ag!<space>
 
 "lightline -> https://github.com/itchyny/lightline.vim
-set laststatus=2
+"set laststatus=2
 let g:lightline = {
       \ 'colorscheme': 'landscape',
       \ 'mode_map': { 'c': 'NORMAL' },
@@ -196,11 +192,15 @@ autocmd FileType nerdtree noremap <buffer> <leader><Left> <nop>
 autocmd FileType nerdtree noremap <buffer> <leader><Right> <nop>
 
 "supertap -> https://github.com/ervandew/supertab
+"let g:SuperTabNoCompleteAfter = ['^', ',', '\s']
+
+"deoplete -> https://github.com/Shougo/deoplete.nvim
+let g:deoplete#enable_at_startup = 1
 
 "fugitive -> https://github.com/tpope/vim-fugitive
 
 "gitgutter -> https://github.com/airblade/vim-gitgutter
-let g:gitgutter_sign_column_always=1
+"let g:gitgutter_sign_column_always=1
 
 "multi-cursor -> https://github.com/terryma/vim-multiple-cursors/
 
