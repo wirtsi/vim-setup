@@ -31,8 +31,11 @@ colorscheme Tomorrow-Night-Eighties
 "colorscheme Afterglow
 if !has("gui_vimr")
   ""Here goes some VimR specific settings like
-  set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
+  "set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline:h16
+  set guifont=Inconsolata\ for\ Powerline:h20
+  let g:Powerline_symbols = 'fancy'
   set termguicolors
+  set fillchars+=stl:\ ,stlnc:\
 endif
 
 "clipboard sharing with osx
@@ -262,6 +265,22 @@ nmap <D-0> <Plug>BufTabLine.Go(10)
 nnoremap <leader>t :Files<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>r :History<cr>
+let g:fzf_buffers_jump = 1
+" Augmenting Ag command using fzf#vim#with_preview function
+"   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
+"     * For syntax-highlighting, Ruby and any of the following tools are required:
+"       - Highlight: http://www.andre-simon.de/doku/highlight/en/highlight.php
+"       - CodeRay: http://coderay.rubychan.de/
+"       - Rouge: https://github.com/jneen/rouge
+"
+"   :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
+"   :Ag! - Start fzf in fullscreen and display the preview window above
+command! -bang -nargs=* Ag
+  \ call fzf#vim#ag(<q-args>,
+  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \                 <bang>0)
+
 
 
 "rainbox_parenthesis -> https://github.com/luochen1990/rainbow
