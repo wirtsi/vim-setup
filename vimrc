@@ -48,7 +48,8 @@ map <leader>s :source ~/.vimrc<CR>
 
 set number
 syntax on
-filetype plugin indent on
+"don't let vim override the settings here
+filetype plugin indent off
 let mapleader=" "
 set hidden
 set nowrap
