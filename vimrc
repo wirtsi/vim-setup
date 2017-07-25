@@ -6,6 +6,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'rizzatti/dash.vim'
   Plug 'Shougo/deoplete.nvim'
   Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-rhubarb'
   Plug 'scrooloose/nerdcommenter'
   Plug 'Xuyuanp/nerdtree-git-plugin'
   Plug 'luochen1990/rainbow'
@@ -38,23 +39,25 @@ endif
 "clipboard sharing with osx
 set clipboard=unnamed
 
+"reload with Leader s
+map <leader>s :source ~/.vimrc<CR>
 
 "set backupdir=~/.vim/backup_files//
 "set directory=~/.vim/swap_files//
 "set undodir=~/.vim/undo_files//
 
 set number
+syntax on
+filetype plugin indent on
 let mapleader=" "
-"reload with Leader s
-map <leader>s :source ~/.vimrc<CR>
 set hidden
-filetype indent on
 set nowrap
 set tabstop=2
+set softtabstop=2
 set shiftwidth=2
 set expandtab
 "set nosmartindent
-set autoindent
+"set autoindent
 set copyindent    " copy the previous indentation on autoindenting
 set autowrite
 set shiftround    " use multiple of shiftwidth when indenting with '<' and '>
@@ -87,7 +90,7 @@ map <D-A-UP> <C-w>W
 let g:move_key_modifier = 'C'
 
 
-"Open vimgrep and put the cursor in the right position:
+"Open the silver search in fzf-vim
 map <leader>g :Ag!<space>
 
 "lightline -> https://github.com/itchyny/lightline.vim
@@ -191,9 +194,6 @@ autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
 autocmd FileType nerdtree noremap <buffer> <leader><Left> <nop>
 autocmd FileType nerdtree noremap <buffer> <leader><Right> <nop>
 
-"supertap -> https://github.com/ervandew/supertab
-"let g:SuperTabNoCompleteAfter = ['^', ',', '\s']
-
 "deoplete -> https://github.com/Shougo/deoplete.nvim
 let g:deoplete#enable_at_startup = 1
 
@@ -226,7 +226,7 @@ nmap <leader>kk :BuffergatorMruCycleNext<cr>
 " View the entire list of buffers open
 nmap <leader>bg :BuffergatorOpen<cr>
 
-" Shared bindings from Solution #1 from earlier
+" Copy shortcuts from window to buffer
 nmap <leader>T :enew<cr>
 nmap <leader>bq :bp <BAR> bd #<cr>
 
