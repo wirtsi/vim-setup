@@ -1,12 +1,14 @@
 call plug#begin('~/.vim/plugged')
+  Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'https://github.com/itchyny/lightline.vim'
-  "Plug 'ervandew/supertab'
   Plug 'rizzatti/dash.vim'
-  Plug 'Shougo/deoplete.nvim'
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'tpope/vim-fugitive'
+  Plug 'editorconfig/editorconfig-vim'
   Plug 'tpope/vim-rhubarb'
+  Plug 'machakann/vim-swap'
   Plug 'scrooloose/nerdcommenter'
   Plug 'Xuyuanp/nerdtree-git-plugin'
   Plug 'luochen1990/rainbow'
@@ -15,10 +17,18 @@ call plug#begin('~/.vim/plugged')
   Plug 'airblade/vim-gitgutter'
   Plug 'matze/vim-move'
   Plug 'terryma/vim-multiple-cursors'
+  Plug 'jszakmeister/vim-togglecursor'
   Plug 'sheerun/vim-polyglot'
   Plug 'jeetsukumaran/vim-buffergator'
   Plug 'w0rp/ale'
   Plug 'octref/RootIgnore'
+  Plug 'tpope/vim-dispatch'
+  if has('nvim')
+    " Adds neovim support to vim-dispatch
+    Plug 'radenling/vim-dispatch-neovim'
+  endif
+  Plug 'Shougo/echodoc.vim'
+  Plug 'roxma/LanguageServer-php-neovim'
 call plug#end()
 
 set encoding=utf-8
@@ -30,37 +40,46 @@ set rtp+=/usr/local/opt/fzf
 
 colorscheme Tomorrow-Night-Eighties
 "colorscheme Afterglow
+"Here goes some neovim specific settings like
 if has("nvim")
-  ""Here goes some neovim specific settings like
   let g:Powerline_symbols = 'fancy'
   set termguicolors
+endif
+
+"Terminal Mode mapping
+if exists(':tnoremap')
+    tnoremap <Esc> <C-\><C-n>
+    tnoremap <leader><Left> <C-\><C-N>:bprev<CR>
+    tnoremap <leader><Right> <C-\><C-N>:bnext<CR>
+    tnoremap <leader>bq <C-\><C-N>:bd!<cr>
 endif
 
 "clipboard sharing with osx
 set clipboard=unnamed
 
-"reload with Leader s
-map <leader>s :source ~/.vimrc<CR>
-
-"set backupdir=~/.vim/backup_files//
-"set directory=~/.vim/swap_files//
-"set undodir=~/.vim/undo_files//
-
 set number
 syntax on
 "don't let vim override the settings here
-filetype plugin indent off
+"filetype plugin indent off
 let mapleader=" "
+"reload with Leader s
+map <leader>s :source ~/.vimrc<CR>
 set hidden
 set nowrap
-set tabstop=2
-set softtabstop=2
-set shiftwidth=2
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
 set expandtab
+set cursorline
+set noswapfile
+set nowritebackup
+set relativenumber
+set lazyredraw
+set nu
 "set nosmartindent
 "set autoindent
-set copyindent    " copy the previous indentation on autoindenting
-set autowrite
+"set copyindent    " copy the previous indentation on autoindenting
+"set autowrite
 set shiftround    " use multiple of shiftwidth when indenting with '<' and '>
 set showmatch
 set smarttab      " insert tabs on the start of a line according to
@@ -74,28 +93,36 @@ set showmatch
 set matchtime=3
 autocmd BufWritePre * :%s/\s\+$//e
 set hlsearch
+set autochdir
+set splitbelow
+set splitright
+"disable highlighting with esc
 nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 
 "fix terminal cursor keys? <- http://apple.stackexchange.com/questions/3369/why-dont-my-arrow-keys-work-in-vim-under-iterm
-nnoremap <silent> <ESC>^[A <Nop>
-nnoremap <silent> <ESC>^[B <Nop>
-nnoremap <silent> <ESC>^[D <Nop>
-nnoremap <silent> <ESC>^[C <Nop>
+"nnoremap <silent> <ESC>^[A <Nop>
+"nnoremap <silent> <ESC>^[B <Nop>
+"nnoremap <silent> <ESC>^[D <Nop>
+"nnoremap <silent> <ESC>^[C <Nop>
 
-map <D-A-RIGHT> <C-w>l
-map <D-A-LEFT> <C-w>h
-map <D-A-DOWN> <C-w><C-w>
-map <D-A-UP> <C-w>W
+if has("gui_vimr")
+    "use cmd+alt+<cursor> to move between windows, only in vimr
+    map <D-A-RIGHT> <C-w>l
+    map <D-A-LEFT> <C-w>h
+    map <D-A-DOWN> <C-w><C-w>
+    map <D-A-UP> <C-w>W
+
+    "Alt-right|left in vimr for buffer switches
+    map <A-Right> :bnext<cr>
+    map <A-Left> :bprevious<cr>
+endif
 
 "vim-move -> https://github.com/matze/vim-move
 let g:move_key_modifier = 'C'
 
 
-"Open the silver search in fzf-vim
-map <leader>g :Ag!<space>
 
 "lightline -> https://github.com/itchyny/lightline.vim
-"set laststatus=2
 let g:lightline = {
       \ 'colorscheme': 'landscape',
       \ 'mode_map': { 'c': 'NORMAL' },
@@ -160,7 +187,6 @@ function! LightlineMode()
   return winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
 
-
 function! LightlineLinterStatus()
     let l:counts = ale#statusline#Count(bufnr(''))
 
@@ -197,11 +223,13 @@ autocmd FileType nerdtree noremap <buffer> <leader><Right> <nop>
 
 "deoplete -> https://github.com/Shougo/deoplete.nvim
 let g:deoplete#enable_at_startup = 1
+let b:deoplete_ignore_sources = ['buffer', 'neco-syntax']
 
 "fugitive -> https://github.com/tpope/vim-fugitive
 
 "gitgutter -> https://github.com/airblade/vim-gitgutter
 "let g:gitgutter_sign_column_always=1
+set fillchars+=vert:│
 
 "multi-cursor -> https://github.com/terryma/vim-multiple-cursors/
 
@@ -237,19 +265,6 @@ nmap <leader>bq :bp <BAR> bd #<cr>
 map <leader><Left> :bprev<CR>
 map <leader><Right> :bnext<CR>
 
-if exists(':tnoremap')
-  "Terminal Mode mapping
-  tnoremap <Esc> <C-\><C-n>
-  tnoremap <leader><Left> <C-\><C-N>:bprev<CR>
-  tnoremap <leader><Right> <C-\><C-N>:bnext<CR>
-  tnoremap <leader>bq <C-\><C-N>:bd!<cr>
-endif
-
-"iterm doesn allow this
-if has("gui_macvim")
-  map <C-Tab> :bnext<cr>
-  map <C-S-Tab> :bprevious<cr>
-endif
 
 nmap <D-1> <Plug>BufTabLine.Go(1)
 nmap <D-2> <Plug>BufTabLine.Go(2)
@@ -262,10 +277,13 @@ nmap <D-8> <Plug>BufTabLine.Go(8)
 nmap <D-9> <Plug>BufTabLine.Go(9)
 nmap <D-0> <Plug>BufTabLine.Go(10)
 
-"zfz.vim -> https://github.com/junegunn/fzf.vim
+"fzf.vim -> https://github.com/junegunn/fzf.vim
 nnoremap <leader>t :Files<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>r :History<cr>
+autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
+"Open the silver search in fzf-vim
+map <leader>g :Ag!<space>
 let g:fzf_buffers_jump = 1
 " Augmenting Ag command using fzf#vim#with_preview function
 "   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
@@ -315,8 +333,8 @@ nmap <silent> <leader>d <Plug>DashSearch
 "Auto align = or :
 nmap <Leader>t= :Tabularize /=<CR>
 vmap <Leader>t= :Tabularize /=<CR>
-nmap <Leader>t: :Tabularize /:\zs<CR>
-vmap <Leader>t: :Tabularize /:\zs<CR>
+nmap <Leader>t: :Tabularize /:<CR>
+vmap <Leader>t: :Tabularize /:<CR>
 
 "vim-dispatch -> https://github.com/tpope/vim-dispatch
 "vim-dispatch doesn't like fish
@@ -326,3 +344,17 @@ set shell=/bin/bash
 " Write this in your vimrc file
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
+
+"https://github.com/autozimu/LanguageClient-neovim
+let g:LanguageClient_serverCommands = {
+  \ 'python' : ['/usr/local/bin/pyls']
+  \}
+let g:LanguageClient_autoStart = 0
+"autocmd FileType php LanguageClientStart
+nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
+
+"https://github.com/editorconfig/editorconfig-vim
+let g:EditorConfig_exclude_patterns = ['fugitive://.*']
