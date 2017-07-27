@@ -386,6 +386,12 @@ nmap s <Plug>(easymotion-s)
 " `<Leader>s{char}{char}{label}`
 nmap <Leader>s <Plug>(easymotion-s2)
 
+"Search word forward
+nmap w <Plug>(easymotion-w)
+
+"Search word backward
+nmap b <Plug>(easymotion-b)
+
 " JK motions: Line motions
 map j <Plug>(easymotion-j)
 map k <Plug>(easymotion-k)
