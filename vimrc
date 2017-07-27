@@ -29,6 +29,7 @@ call plug#begin('~/.vim/plugged')
   endif
   Plug 'Shougo/echodoc.vim'
   Plug 'roxma/LanguageServer-php-neovim'
+  Plug 'easymotion/vim-easymotion'
 call plug#end()
 
 set encoding=utf-8
@@ -62,8 +63,8 @@ syntax on
 "don't let vim override the settings here
 "filetype plugin indent off
 let mapleader=" "
-"reload with Leader s
-map <leader>s :source ~/.vimrc<CR>
+"reload with Leader rl
+map <leader>rl :source ~/.vimrc<CR>
 set hidden
 set nowrap
 set tabstop=4
@@ -245,7 +246,7 @@ let g:buffergator_suppress_keymaps = 1
 "let g:buffergator_mru_cycle_loop = 1
 
 " toggle between last buffers
-nnoremap <Leader><Leader> :e#<CR>
+"nnoremap <Leader><Leader> :e#<CR>
 " Go to the previous buffer open
 nmap <leader>jj :BuffergatorMruCyclePrev<cr>
 
@@ -351,8 +352,8 @@ let g:ale_set_quickfix = 1
 
 "https://github.com/autozimu/LanguageClient-neovim
 let g:LanguageClient_serverCommands = {
-  \ 'python' : ['/usr/local/bin/pyls']
-  \}
+\ 'python' : ['/usr/local/bin/pyls']
+\}
 let g:LanguageClient_autoStart = 0
 "autocmd FileType php LanguageClientStart
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
@@ -362,3 +363,29 @@ nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
 
 "https://github.com/editorconfig/editorconfig-vim
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
+
+"https://github.com/easymotion/vim-easymotion
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+
+" Turn on case insensitive feature
+let g:EasyMotion_smartcase = 1
+
+"Forward search
+" `f{char}{label}`
+nmap f <Plug>(easymotion-f)
+
+"Backward search
+" `b{char}{label}`
+nmap b <Plug>(easymotion-b)
+
+"Search one char
+" `s{char}{label}`
+nmap s <Plug>(easymotion-s)
+
+"Search two chars
+" `<Leader>s{char}{char}{label}`
+nmap <Leader>s <Plug>(easymotion-s2)
+
+" JK motions: Line motions
+map j <Plug>(easymotion-j)
+map k <Plug>(easymotion-k)
