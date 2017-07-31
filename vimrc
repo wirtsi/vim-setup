@@ -30,6 +30,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'Shougo/echodoc.vim'
   Plug 'roxma/LanguageServer-php-neovim'
   Plug 'easymotion/vim-easymotion'
+  Plug 'chriskempson/base16-vim'
 call plug#end()
 
 set encoding=utf-8
@@ -39,7 +40,8 @@ set noshowmode
 "fzf integration
 set rtp+=/usr/local/opt/fzf
 
-colorscheme Tomorrow-Night-Eighties
+colorscheme base16-tomorrow-night
+"colorscheme Tomorrow-Night-Eighties
 "colorscheme Afterglow
 "Here goes some neovim specific settings like
 if has("nvim")
@@ -392,6 +394,7 @@ nmap w <Plug>(easymotion-w)
 "Search word backward
 nmap b <Plug>(easymotion-b)
 
-" JK motions: Line motions
-map j <Plug>(easymotion-j)
-map k <Plug>(easymotion-k)
+" JK motions: Line motions. Keep defaults because easymotion doesn't support
+" line jumps
+map <leader>j <Plug>(easymotion-j)
+map <leader>k <Plug>(easymotion-k)
