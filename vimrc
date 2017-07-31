@@ -31,6 +31,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'roxma/LanguageServer-php-neovim'
   Plug 'easymotion/vim-easymotion'
   Plug 'chriskempson/base16-vim'
+  Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 set encoding=utf-8
@@ -41,11 +42,11 @@ set noshowmode
 set rtp+=/usr/local/opt/fzf
 
 colorscheme base16-tomorrow-night
+set guifont=Meslo\ LG\ M\ Regular\ for\ Powerline\ Nerd\ Font\ Complete:h15
 "colorscheme Tomorrow-Night-Eighties
 "colorscheme Afterglow
 "Here goes some neovim specific settings like
 if has("nvim")
-  let g:Powerline_symbols = 'fancy'
   set termguicolors
 endif
 
@@ -102,6 +103,8 @@ set splitright
 "disable highlighting with esc
 nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 
+hi EndOfBuffer ctermbg=black ctermfg=black guibg=black guifg=black
+
 "fix terminal cursor keys? <- http://apple.stackexchange.com/questions/3369/why-dont-my-arrow-keys-work-in-vim-under-iterm
 "nnoremap <silent> <ESC>^[A <Nop>
 "nnoremap <silent> <ESC>^[B <Nop>
@@ -130,7 +133,7 @@ let g:lightline = {
       \ 'colorscheme': 'landscape',
       \ 'mode_map': { 'c': 'NORMAL' },
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filetype', 'filename' ] ],
       \   'right': [ ['linter'] ]
       \ },
       \ 'component_function': {
@@ -138,8 +141,8 @@ let g:lightline = {
       \   'readonly': 'LightlineReadonly',
       \   'fugitive': 'LightlineFugitive',
       \   'filename': 'LightlineFilename',
-      \   'fileformat': 'LightlineFileformat',
-      \   'filetype': 'LightlineFiletype',
+      \   'fileformat': 'DevIconFileFormat',
+      \   'filetype': 'DevIconFileType',
       \   'fileencoding': 'LightlineFileencoding',
       \   'mode': 'LightlineMode',
       \   'linter' : 'LightlineLinterStatus'
@@ -148,6 +151,13 @@ let g:lightline = {
       \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
       \ }
 
+function! DevIconFileType()
+  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+endfunction
+
+function! DevIconFileFormat()
+  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+endfunction
 
 function! LightlineModified()
   return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
