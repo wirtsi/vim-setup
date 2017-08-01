@@ -55,17 +55,17 @@ if !has("gui_vimr")
     set guifont=Meslo\ LG\ M\ Regular\ for\ Powerline\ Nerd\ Font\ Complete:h15
 else
     "use cmd+alt+<cursor> to move between windows, only in vimr
-    map <D-A-RIGHT> <C-w>l
-    map <D-A-LEFT> <C-w>h
-    map <D-A-DOWN> <C-w><C-w>
-    map <D-A-UP> <C-w>W
+    map <D-A-RIGHT> <C-w><right>
+    map <D-A-LEFT> <C-w><left>
+    map <D-A-DOWN> <C-w><down>
+    map <D-A-UP> <C-w><up>
 
     "Alt-right|left in vimr for buffer switches
     map <A-Right> :bnext<cr>
     map <A-Left> :bprevious<cr>
 endif
 
-"Terminal Mode mapping
+"Terminal Mode mapping. We dont want buffers insiide terminal windows
 if exists(':tnoremap')
     autocmd TermOpen * setlocal nonumber norelativenumber
     autocmd TermOpen,BufEnter,BufLeave setlocal statusline=%{b:term_title}
@@ -123,7 +123,6 @@ hi EndOfBuffer ctermbg=black ctermfg=black guibg=black guifg=black
 
 "https://github.com/spolu/dwm.vim
 let g:dwm_map_keys = 0
-let g:dwm_master_pane_width=80
 set mouse=a
 
 "move counter- and clockwise through windows
@@ -137,7 +136,7 @@ tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
 tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
 
 "zoom current window
-nmap <silent> <F4> :call DWM_AutoEnter()<CR>
+nmap <silent> <F4> :call DWM_Focus()<CR>
 tmap <silent> <F4> <C-\><C-n>:call DWM_Focus()<CR>
 
 "shrink and grow master
