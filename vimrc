@@ -32,6 +32,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'easymotion/vim-easymotion'
   Plug 'chriskempson/base16-vim'
   Plug 'ryanoasis/vim-devicons'
+  Plug 'tpope/vim-surround'
+  Plug 'spolu/dwm.vim'
 call plug#end()
 
 set encoding=utf-8
@@ -42,26 +44,40 @@ set noshowmode
 set rtp+=/usr/local/opt/fzf
 
 colorscheme base16-tomorrow-night
-set guifont=Meslo\ LG\ M\ Regular\ for\ Powerline\ Nerd\ Font\ Complete:h15
-"colorscheme Tomorrow-Night-Eighties
-"colorscheme Afterglow
+
 "Here goes some neovim specific settings like
 if has("nvim")
   set termguicolors
 endif
 
+if !has("gui_vimr")
+    "vimr doesn't like this
+    set guifont=Meslo\ LG\ M\ Regular\ for\ Powerline\ Nerd\ Font\ Complete:h15
+else
+    "use cmd+alt+<cursor> to move between windows, only in vimr
+    map <D-A-RIGHT> <C-w>l
+    map <D-A-LEFT> <C-w>h
+    map <D-A-DOWN> <C-w><C-w>
+    map <D-A-UP> <C-w>W
+
+    "Alt-right|left in vimr for buffer switches
+    map <A-Right> :bnext<cr>
+    map <A-Left> :bprevious<cr>
+endif
+
 "Terminal Mode mapping
 if exists(':tnoremap')
-    tnoremap <Esc> <C-\><C-n>
-    tnoremap <leader><Left> <C-\><C-N>:bprev<CR>
-    tnoremap <leader><Right> <C-\><C-N>:bnext<CR>
-    tnoremap <leader>bq <C-\><C-N>:bd!<cr>
+    autocmd TermOpen * setlocal nonumber norelativenumber
+    autocmd TermOpen,BufEnter,BufLeave setlocal statusline=%{b:term_title}
+    autocmd BufWinEnter,WinEnter term://* startinsert
+    autocmd BufLeave term://* stopinsert
 endif
 
 "clipboard sharing with osx
 set clipboard=unnamed
 
 set number
+set relativenumber
 syntax on
 "don't let vim override the settings here
 "filetype plugin indent off
@@ -77,7 +93,6 @@ set expandtab
 set cursorline
 set noswapfile
 set nowritebackup
-set relativenumber
 set lazyredraw
 set nu
 "set nosmartindent
@@ -105,23 +120,42 @@ nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 
 hi EndOfBuffer ctermbg=black ctermfg=black guibg=black guifg=black
 
-"fix terminal cursor keys? <- http://apple.stackexchange.com/questions/3369/why-dont-my-arrow-keys-work-in-vim-under-iterm
-"nnoremap <silent> <ESC>^[A <Nop>
-"nnoremap <silent> <ESC>^[B <Nop>
-"nnoremap <silent> <ESC>^[D <Nop>
-"nnoremap <silent> <ESC>^[C <Nop>
 
-if has("gui_vimr")
-    "use cmd+alt+<cursor> to move between windows, only in vimr
-    map <D-A-RIGHT> <C-w>l
-    map <D-A-LEFT> <C-w>h
-    map <D-A-DOWN> <C-w><C-w>
-    map <D-A-UP> <C-w>W
+"https://github.com/spolu/dwm.vim
+let g:dwm_map_keys = 0
+let g:dwm_master_pane_width=80
+set mouse=a
 
-    "Alt-right|left in vimr for buffer switches
-    map <A-Right> :bnext<cr>
-    map <A-Left> :bprevious<cr>
-endif
+"move counter- and clockwise through windows
+nmap <silent> <F2> <C-W>W
+nmap <silent> <F3> <C-W>w
+tmap <silent> <F3> <C-\><C-n><C-W>w
+tmap <silent> <F2> <C-\><C-n><C-W>W
+tmap <silent> <C-w><left> <C-\><C-n><C-w><left>
+tmap <silent> <C-w><right> <C-\><C-n><C-w><right>
+tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
+tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
+
+"zoom current window
+nmap <silent> <F4> :call DWM_AutoEnter()<CR>
+tmap <silent> <F4> <C-\><C-n>:call DWM_Focus()<CR>
+
+"shrink and grow master
+nmap <silent> <F5> :call DWM_ShrinkMaster()<CR>
+tmap <silent> <F5> <C-\><C-n>:call DWM_ShrinkMaster()<CR>
+
+nmap <silent> <F6> :call DWM_GrowMaster()<CR>
+tmap <silent> <F6> <C-\><C-n>:call DWM_GrowMaster()<CR>
+
+nmap <silent> <F7> :exec DWM_Close()<CR>
+tmap <silent> <F7> <C-\><C-n>:exec DWM_Close()<CR>
+
+nmap <silent> <F8> :call DWM_New()<CR>:terminal<CR>
+tmap <silent> <F8> <C-\><C-n>:call DWM_New()<CR>:terminal<CR>
+
+nmap <silent> <F9> :call DWM_New()<CR>
+tmap <silent> <F9> <C-\><C-n>:call DWM_New()<CR>
+
 
 "vim-move -> https://github.com/matze/vim-move
 let g:move_key_modifier = 'C'
@@ -355,7 +389,7 @@ vmap <Leader>t: :Tabularize /:<CR>
 
 "vim-dispatch -> https://github.com/tpope/vim-dispatch
 "vim-dispatch doesn't like fish
-set shell=/bin/bash
+"set shell=/bin/bash
 
 "ale -> https://github.com/w0rp/ale
 " Write this in your vimrc file
@@ -370,7 +404,7 @@ let g:LanguageClient_autoStart = 0
 "autocmd FileType php LanguageClientStart
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+"nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
 
 "https://github.com/editorconfig/editorconfig-vim
@@ -408,3 +442,4 @@ nmap b <Plug>(easymotion-b)
 " line jumps
 map <leader>j <Plug>(easymotion-j)
 map <leader>k <Plug>(easymotion-k)
+
