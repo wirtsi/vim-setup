@@ -66,6 +66,25 @@ if exists(':tnoremap')
     autocmd BufWinEnter,WinEnter term://* startinsert
     autocmd BufLeave term://* stopinsert
     autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
+    "fix standard windows commands in terminal mode
+    tmap <silent> <C-w><left> <C-\><C-n><C-w><left>
+    tmap <silent> <C-w><right> <C-\><C-n><C-w><right>
+    tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
+    tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
+    tmap <silent> <C-w>q <C-\><C-n><C-w>q
+    "dwm mappings for f-keys
+    tmap <silent> <F2> <C-\><C-n><C-w>W
+    tmap <silent> <F3> <C-\><C-n><C-w>w
+    tmap <silent> <F4> <C-\><C-n>:call DWM_Focus()<CR>
+    tmap <silent> <F7> <C-\><C-n>:exec DWM_Close()<CR>
+    tmap <silent> <F5> <C-\><C-n>:call DWM_ShrinkMaster()<CR>
+    tmap <silent> <F6> <C-\><C-n>:call DWM_GrowMaster()<CR>
+    tmap <silent> <F8> <C-\><C-n>:call DWM_New() <bar> terminal<CR>
+    tmap <silent> <F9> <C-\><C-n>:call DWM_New()<CR>
+    tmap <silent> <F9> <C-\><C-n>:call DWM_New()<CR>
+    tmap <silent> <F6> <C-\><C-n>:call DWM_GrowMaster()<CR>
+    tmap <silent> <F8> <C-\><C-n>:call DWM_New() <bar> terminal<CR>
+    tmap <silent> <F9> :call DWM_New()<CR>
 endif
 
 "clipboard sharing with osx
@@ -90,6 +109,7 @@ set noswapfile
 set nowritebackup
 set lazyredraw
 set nu
+set autowrite
 "set nosmartindent
 "set autoindent
 "set copyindent    " copy the previous indentation on autoindenting
@@ -113,6 +133,7 @@ set splitright
 "disable highlighting with esc
 nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 
+"don't show tilde for empty lines
 hi EndOfBuffer ctermbg=black ctermfg=black guibg=black guifg=black
 
 
@@ -123,34 +144,16 @@ set mouse=a
 "move counter- and clockwise through windows
 nmap <silent> <F2> <C-w>W
 nmap <silent> <F3> <C-w>w
-tmap <silent> <F3> <C-\><C-n><C-w>w
-tmap <silent> <F2> <C-\><C-n><C-w>W
-"fix standard windows commands in terminal mode
-tmap <silent> <C-w><left> <C-\><C-n><C-w><left>
-tmap <silent> <C-w><right> <C-\><C-n><C-w><right>
-tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
-tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
-tmap <silent> <C-w>q <C-\><C-n><C-w>q
 
 "zoom current window
 nmap <silent> <F4> :call DWM_Focus()<CR>
-tmap <silent> <F4> <C-\><C-n>:call DWM_Focus()<CR>
 
 "shrink and grow master
 nmap <silent> <F5> :call DWM_ShrinkMaster()<CR>
-tmap <silent> <F5> <C-\><C-n>:call DWM_ShrinkMaster()<CR>
-
 nmap <silent> <F6> :call DWM_GrowMaster()<CR>
-tmap <silent> <F6> <C-\><C-n>:call DWM_GrowMaster()<CR>
-
 nmap <silent> <F7> :exec DWM_Close()<CR>
-tmap <silent> <F7> <C-\><C-n>:exec DWM_Close()<CR>
-
 nmap <silent> <F8> :call DWM_New() <bar> terminal<CR>
-tmap <silent> <F8> <C-\><C-n>:call DWM_New() <bar> terminal<CR>
-
 nmap <silent> <F9> :call DWM_New()<CR>
-tmap <silent> <F9> <C-\><C-n>:call DWM_New()<CR>
 
 
 "vim-move -> https://github.com/matze/vim-move
@@ -176,21 +179,22 @@ nmap <leader>9 <Plug>AirlineSelectTab9
 nmap <leader><left> <Plug>AirlineSelectPrevTab
 nmap <leader><right> <Plug>AirlineSelectNextTab
 
-"Allow creating new buffers and closing with leader bq
+"Allow creating new buffers with leader T and closing with leader bq
 nmap <leader>T :enew<cr>
 nmap <leader>bq :bp <BAR> bd #<cr>
 
 "nerdtree -> https://github.com/scrooloose/nerdtree
 map <Leader>n :NERDTreeToggle<CR>
+"show current file in nerdtree
+nmap <leader>j :NERDTreeFind<CR>
 "autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 let NERDTreeMapActivateNode='<right>'
 let NERDTreeShowHidden=0
 let loaded_netrwPlugin=1
 let NERDTreeRespectWildIgnore=1
-"show current file in nerdtree
-nmap <leader>j :NERDTreeFind<CR>
 let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp','/target']
+let g:NERDTreeQuitOnOpen = 1
 "disable some stuff in nerdtree window
 autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>t <nop>
@@ -226,7 +230,7 @@ let g:fzf_buffers_jump = 1
 "   :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
 "   :Ag! - Start fzf in fullscreen and display the preview window above
 command! -bang -nargs=* Ag
-  \ call fzf#vim#ag(<q-args>,
+  \ call fzf#vim#ag(<q-args>,'--color-path 400 --color-line-number 400',
   \                 <bang>0 ? fzf#vim#with_preview('up:60%')
   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
   \                 <bang>0)
