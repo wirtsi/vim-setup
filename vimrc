@@ -2,7 +2,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
-  Plug 'https://github.com/itchyny/lightline.vim'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
   Plug 'rizzatti/dash.vim'
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'tpope/vim-fugitive'
@@ -13,13 +14,12 @@ call plug#begin('~/.vim/plugged')
   Plug 'Xuyuanp/nerdtree-git-plugin'
   Plug 'luochen1990/rainbow'
   Plug 'godlygeek/tabular'
-  Plug 'ap/vim-buftabline'
   Plug 'airblade/vim-gitgutter'
   Plug 'matze/vim-move'
   Plug 'terryma/vim-multiple-cursors'
   Plug 'jszakmeister/vim-togglecursor'
   Plug 'sheerun/vim-polyglot'
-  Plug 'jeetsukumaran/vim-buffergator'
+  Plug 'simnalamburt/vim-mundo'
   Plug 'w0rp/ale'
   Plug 'octref/RootIgnore'
   Plug 'tpope/vim-dispatch'
@@ -54,23 +54,18 @@ if !has("gui_vimr")
     "vimr doesn't like this
     set guifont=Meslo\ LG\ M\ Regular\ for\ Powerline\ Nerd\ Font\ Complete:h15
 else
-    "use cmd+alt+<cursor> to move between windows, only in vimr
-    map <D-A-RIGHT> <C-w><right>
-    map <D-A-LEFT> <C-w><left>
-    map <D-A-DOWN> <C-w><down>
-    map <D-A-UP> <C-w><up>
-
     "Alt-right|left in vimr for buffer switches
-    map <A-Right> :bnext<cr>
-    map <A-Left> :bprevious<cr>
+    nmap <A-Left>  <Plug>AirlineSelectPrevTab
+    nmap <A-Right> <Plug>AirlineSelectNextTab
 endif
 
 "Terminal Mode mapping. We dont want buffers insiide terminal windows
 if exists(':tnoremap')
-    autocmd TermOpen * setlocal nonumber norelativenumber
+    autocmd TermOpen * setlocal nonumber norelativenumber bufhidden=hide
     autocmd TermOpen,BufEnter,BufLeave setlocal statusline=%{b:term_title}
     autocmd BufWinEnter,WinEnter term://* startinsert
     autocmd BufLeave term://* stopinsert
+    autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
 endif
 
 "clipboard sharing with osx
@@ -126,14 +121,16 @@ let g:dwm_map_keys = 0
 set mouse=a
 
 "move counter- and clockwise through windows
-nmap <silent> <F2> <C-W>W
-nmap <silent> <F3> <C-W>w
-tmap <silent> <F3> <C-\><C-n><C-W>w
-tmap <silent> <F2> <C-\><C-n><C-W>W
+nmap <silent> <F2> <C-w>W
+nmap <silent> <F3> <C-w>w
+tmap <silent> <F3> <C-\><C-n><C-w>w
+tmap <silent> <F2> <C-\><C-n><C-w>W
+"fix standard windows commands in terminal mode
 tmap <silent> <C-w><left> <C-\><C-n><C-w><left>
 tmap <silent> <C-w><right> <C-\><C-n><C-w><right>
 tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
 tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
+tmap <silent> <C-w>q <C-\><C-n><C-w>q
 
 "zoom current window
 nmap <silent> <F4> :call DWM_Focus()<CR>
@@ -149,8 +146,8 @@ tmap <silent> <F6> <C-\><C-n>:call DWM_GrowMaster()<CR>
 nmap <silent> <F7> :exec DWM_Close()<CR>
 tmap <silent> <F7> <C-\><C-n>:exec DWM_Close()<CR>
 
-nmap <silent> <F8> :call DWM_New()<CR>:terminal<CR>
-tmap <silent> <F8> <C-\><C-n>:call DWM_New()<CR>:terminal<CR>
+nmap <silent> <F8> :call DWM_New() <bar> terminal<CR>
+tmap <silent> <F8> <C-\><C-n>:call DWM_New() <bar> terminal<CR>
 
 nmap <silent> <F9> :call DWM_New()<CR>
 tmap <silent> <F9> <C-\><C-n>:call DWM_New()<CR>
@@ -159,93 +156,29 @@ tmap <silent> <F9> <C-\><C-n>:call DWM_New()<CR>
 "vim-move -> https://github.com/matze/vim-move
 let g:move_key_modifier = 'C'
 
+"airline -> https://github.com/vim-airline/vim-airline
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#excludes = ["term://*"]
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline_theme='base16_twilight'
 
+nmap <leader>1 <Plug>AirlineSelectTab1
+nmap <leader>2 <Plug>AirlineSelectTab2
+nmap <leader>3 <Plug>AirlineSelectTab3
+nmap <leader>4 <Plug>AirlineSelectTab4
+nmap <leader>5 <Plug>AirlineSelectTab5
+nmap <leader>6 <Plug>AirlineSelectTab6
+nmap <leader>7 <Plug>AirlineSelectTab7
+nmap <leader>8 <Plug>AirlineSelectTab8
+nmap <leader>9 <Plug>AirlineSelectTab9
+nmap <leader><left> <Plug>AirlineSelectPrevTab
+nmap <leader><right> <Plug>AirlineSelectNextTab
 
-"lightline -> https://github.com/itchyny/lightline.vim
-let g:lightline = {
-      \ 'colorscheme': 'landscape',
-      \ 'mode_map': { 'c': 'NORMAL' },
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filetype', 'filename' ] ],
-      \   'right': [ ['linter'] ]
-      \ },
-      \ 'component_function': {
-      \   'modified': 'LightlineModified',
-      \   'readonly': 'LightlineReadonly',
-      \   'fugitive': 'LightlineFugitive',
-      \   'filename': 'LightlineFilename',
-      \   'fileformat': 'DevIconFileFormat',
-      \   'filetype': 'DevIconFileType',
-      \   'fileencoding': 'LightlineFileencoding',
-      \   'mode': 'LightlineMode',
-      \   'linter' : 'LightlineLinterStatus'
-      \ },
-      \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
-      \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
-      \ }
-
-function! DevIconFileType()
-  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
-endfunction
-
-function! DevIconFileFormat()
-  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
-endfunction
-
-function! LightlineModified()
-  return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
-endfunction
-
-function! LightlineReadonly()
-  return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? "\ue0a2" : ''
-endfunction
-
-function! LightlineFilename()
-  return ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
-        \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
-        \  &ft == 'unite' ? unite#get_status_string() :
-        \  &ft == 'vimshell' ? vimshell#get_status_string() :
-        \ '' != expand('%:t') ? fnamemodify(expand("%"), ":~:.") : '[No Name]') .
-        \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
-endfunction
-
-function! LightlineFugitive()
-  if &ft !~? 'vimfiler\|gundo' && exists("*fugitive#head")
-    let branch = fugitive#head()
-    return branch !=# '' ? "\ue0a0".branch : ''
-  endif
-  return ''
-endfunction
-
-function! LightlineFileformat()
-  return winwidth(0) > 70 ? &fileformat : ''
-endfunction
-
-function! LightlineFiletype()
-  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
-endfunction
-
-function! LightlineFileencoding()
-  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
-endfunction
-
-function! LightlineMode()
-  return winwidth(0) > 60 ? lightline#mode() : ''
-endfunction
-
-function! LightlineLinterStatus()
-    let l:counts = ale#statusline#Count(bufnr(''))
-
-    let l:all_errors = l:counts.error + l:counts.style_error
-    let l:all_non_errors = l:counts.total - l:all_errors
-
-    return l:counts.total == 0 ? 'OK' : printf(
-    \   '%dW %dE',
-    \   all_non_errors,
-    \   all_errors
-    \)
-endfunction
-
+"Allow creating new buffers and closing with leader bq
+nmap <leader>T :enew<cr>
+nmap <leader>bq :bp <BAR> bd #<cr>
 
 "nerdtree -> https://github.com/scrooloose/nerdtree
 map <Leader>n :NERDTreeToggle<CR>
@@ -259,13 +192,9 @@ let NERDTreeRespectWildIgnore=1
 nmap <leader>j :NERDTreeFind<CR>
 let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp','/target']
 "disable some stuff in nerdtree window
-autocmd FileType nerdtree noremap <buffer> <C-Tab> <nop>
-autocmd FileType nerdtree noremap <buffer> <C-S-Tab> <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>t <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
-autocmd FileType nerdtree noremap <buffer> <leader><Left> <nop>
-autocmd FileType nerdtree noremap <buffer> <leader><Right> <nop>
 
 "deoplete -> https://github.com/Shougo/deoplete.nvim
 let g:deoplete#enable_at_startup = 1
@@ -279,57 +208,13 @@ set fillchars+=vert:│
 
 "multi-cursor -> https://github.com/terryma/vim-multiple-cursors/
 
-"http://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/
-"buffergator -> https://github.com/jeetsukumaran/vim-buffergator
-" Use the right side of the screen
-let g:buffergator_viewport_split_policy = 'R'
-
-" I want my own keymappings...
-let g:buffergator_suppress_keymaps = 1
-
-" Looper buffers
-"let g:buffergator_mru_cycle_loop = 1
-
-" toggle between last buffers
-"nnoremap <Leader><Leader> :e#<CR>
-" Go to the previous buffer open
-nmap <leader>jj :BuffergatorMruCyclePrev<cr>
-
-" Go to the next buffer open
-nmap <leader>kk :BuffergatorMruCycleNext<cr>
-
-" View the entire list of buffers open
-nmap <leader>bg :BuffergatorOpen<cr>
-
-" Copy shortcuts from window to buffer
-nmap <leader>T :enew<cr>
-nmap <leader>bq :bp <BAR> bd #<cr>
-
-"buftabline -> https://github.com/ap/vim-buftabline
-" this renders the buffers on the tabline
-" remap arrow keys
-map <leader><Left> :bprev<CR>
-map <leader><Right> :bnext<CR>
-
-
-nmap <D-1> <Plug>BufTabLine.Go(1)
-nmap <D-2> <Plug>BufTabLine.Go(2)
-nmap <D-3> <Plug>BufTabLine.Go(3)
-nmap <D-4> <Plug>BufTabLine.Go(4)
-nmap <D-5> <Plug>BufTabLine.Go(5)
-nmap <D-6> <Plug>BufTabLine.Go(6)
-nmap <D-7> <Plug>BufTabLine.Go(7)
-nmap <D-8> <Plug>BufTabLine.Go(8)
-nmap <D-9> <Plug>BufTabLine.Go(9)
-nmap <D-0> <Plug>BufTabLine.Go(10)
-
 "fzf.vim -> https://github.com/junegunn/fzf.vim
 nnoremap <leader>t :Files<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>r :History<cr>
-autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
+
 "Open the silver search in fzf-vim
-map <leader>g :Ag!<space>
+map <leader>f :Ag!<space>
 let g:fzf_buffers_jump = 1
 " Augmenting Ag command using fzf#vim#with_preview function
 "   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
@@ -381,10 +266,10 @@ let g:dash_map = {
 
 
 "Auto align = or :
-nmap <Leader>t= :Tabularize /=<CR>
-vmap <Leader>t= :Tabularize /=<CR>
-nmap <Leader>t: :Tabularize /:<CR>
-vmap <Leader>t: :Tabularize /:<CR>
+nmap <Leader>= :Tabularize /=<CR>
+vmap <Leader>= :Tabularize /=<CR>
+nmap <Leader>: :Tabularize /:<CR>
+vmap <Leader>: :Tabularize /:<CR>
 
 "vim-dispatch -> https://github.com/tpope/vim-dispatch
 "vim-dispatch doesn't like fish
@@ -403,7 +288,7 @@ let g:LanguageClient_autoStart = 0
 "autocmd FileType php LanguageClientStart
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-"nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+nnoremap <silent> rn :call LanguageClient_textDocument_rename()<CR>
 nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
 
 "https://github.com/editorconfig/editorconfig-vim
@@ -442,3 +327,5 @@ nmap b <Plug>(easymotion-b)
 map <leader>j <Plug>(easymotion-j)
 map <leader>k <Plug>(easymotion-k)
 
+"https://github.com/simnalamburt/vim-mundo/
+nnoremap <leader>u :MundoToggle<CR>
