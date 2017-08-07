@@ -2,8 +2,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
+  Plug 'Xuyuanp/nerdtree-git-plugin'
   Plug 'rizzatti/dash.vim'
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'tpope/vim-fugitive'
@@ -11,7 +10,6 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-rhubarb'
   Plug 'machakann/vim-swap'
   Plug 'scrooloose/nerdcommenter'
-  Plug 'Xuyuanp/nerdtree-git-plugin'
   Plug 'luochen1990/rainbow'
   Plug 'godlygeek/tabular'
   Plug 'airblade/vim-gitgutter'
@@ -34,6 +32,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'ryanoasis/vim-devicons'
   Plug 'tpope/vim-surround'
   Plug 'spolu/dwm.vim'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
 call plug#end()
 
 set encoding=utf-8
@@ -76,15 +76,11 @@ if exists(':tnoremap')
     tmap <silent> <F2> <C-\><C-n><C-w>W
     tmap <silent> <F3> <C-\><C-n><C-w>w
     tmap <silent> <F4> <C-\><C-n>:call DWM_Focus()<CR>
-    tmap <silent> <F7> <C-\><C-n>:exec DWM_Close()<CR>
     tmap <silent> <F5> <C-\><C-n>:call DWM_ShrinkMaster()<CR>
     tmap <silent> <F6> <C-\><C-n>:call DWM_GrowMaster()<CR>
+    tmap <silent> <F7> <C-\><C-n>:exec DWM_Close()<CR>
     tmap <silent> <F8> <C-\><C-n>:call DWM_New() <bar> terminal<CR>
     tmap <silent> <F9> <C-\><C-n>:call DWM_New()<CR>
-    tmap <silent> <F9> <C-\><C-n>:call DWM_New()<CR>
-    tmap <silent> <F6> <C-\><C-n>:call DWM_GrowMaster()<CR>
-    tmap <silent> <F8> <C-\><C-n>:call DWM_New() <bar> terminal<CR>
-    tmap <silent> <F9> :call DWM_New()<CR>
 endif
 
 "clipboard sharing with osx
@@ -110,6 +106,7 @@ set nowritebackup
 set lazyredraw
 set nu
 set autowrite
+set smartcase
 "set nosmartindent
 "set autoindent
 "set copyindent    " copy the previous indentation on autoindenting
@@ -211,6 +208,7 @@ let b:deoplete_ignore_sources = ['buffer', 'neco-syntax']
 set fillchars+=vert:│
 
 "multi-cursor -> https://github.com/terryma/vim-multiple-cursors/
+"Ctrl-N
 
 "fzf.vim -> https://github.com/junegunn/fzf.vim
 nnoremap <leader>t :Files<cr>
@@ -333,3 +331,9 @@ map <leader>k <Plug>(easymotion-k)
 
 "https://github.com/simnalamburt/vim-mundo/
 nnoremap <leader>u :MundoToggle<CR>
+
+"https://github.com/machakann/vim-swap
+"gs, g<, g>
+
+"https://github.com/tpope/vim-surround
+"cs<old><new>" or ds<char>
