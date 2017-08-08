@@ -1,5 +1,6 @@
 call plug#begin('~/.vim/plugged')
   Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -285,10 +286,12 @@ let g:ale_set_quickfix = 1
 
 "https://github.com/autozimu/LanguageClient-neovim
 let g:LanguageClient_serverCommands = {
-\ 'python' : ['/usr/local/bin/pyls']
+\ 'python' : ['/usr/local/bin/pyls'],
+\ 'php' : ['php', '~/php/language-server/vendor/bin/php-language-server.php']
 \}
 let g:LanguageClient_autoStart = 0
-"autocmd FileType php LanguageClientStart
+autocmd FileType php LanguageClientStart
+autocmd FileType python LanguageClientStart
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> rn :call LanguageClient_textDocument_rename()<CR>
