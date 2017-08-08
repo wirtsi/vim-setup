@@ -183,7 +183,7 @@ nmap <leader>bq :bp <BAR> bd #<cr>
 "nerdtree -> https://github.com/scrooloose/nerdtree
 map <Leader>n :NERDTreeToggle<CR>
 "show current file in nerdtree
-nmap <leader>j :NERDTreeFind<CR>
+nmap <leader>l :NERDTreeFind<CR>
 "autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 let NERDTreeMapActivateNode='<right>'
