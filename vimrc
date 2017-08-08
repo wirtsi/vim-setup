@@ -178,7 +178,8 @@ nmap <leader><right> <Plug>AirlineSelectNextTab
 
 "Allow creating new buffers with leader T and closing with leader bq
 nmap <leader>T :enew<cr>
-nmap <leader>bq :bp <BAR> bd #<cr>
+"needs some massaging so vim doesnt focus a terminal after closing the buffer
+nmap <leader>bq :bp <bar>bd #<BAR>execute "normal \<Plug>AirlineSelectTab1"<cr>
 
 "nerdtree -> https://github.com/scrooloose/nerdtree
 map <Leader>n :NERDTreeToggle<CR>
