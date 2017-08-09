@@ -72,7 +72,7 @@ if exists(':tnoremap')
     tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
     tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
     "don't leave terminal buffers hanging around
-    tmap <silent> <C-w>q <C-\><C-n>:bd!<cr>
+    tmap <silent> <C-w>q <C-\><C-n>:bd!<CR>
     "dwm mappings for f-keys
     tmap <silent> <F2> <C-\><C-n><C-w>W
     tmap <silent> <F3> <C-\><C-n><C-w>w
@@ -110,7 +110,7 @@ set lazyredraw
 set nu
 set autowrite
 set smartcase
-"set nosmartindent
+set smartindent
 "set autoindent
 "set copyindent    " copy the previous indentation on autoindenting
 "set autowrite
@@ -130,6 +130,8 @@ set hlsearch
 set autochdir
 set splitbelow
 set splitright
+set mouse=a
+
 "disable highlighting with esc
 nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 
@@ -139,7 +141,6 @@ hi EndOfBuffer ctermbg=black ctermfg=black guibg=black guifg=black
 
 "https://github.com/spolu/dwm.vim
 let g:dwm_map_keys = 0
-set mouse=a
 
 "move counter- and clockwise through windows
 nmap <silent> <F2> <C-w>W
