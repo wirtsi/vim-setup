@@ -62,7 +62,7 @@ endif
 
 "Terminal Mode mapping. We dont want buffers insiide terminal windows
 if exists(':tnoremap')
-    autocmd TermOpen * setlocal nonumber norelativenumber bufhidden=hide
+    autocmd TermOpen * setlocal nonumber norelativenumber
     autocmd TermOpen,BufEnter,BufLeave setlocal statusline=%{b:term_title}
     autocmd BufWinEnter,WinEnter term://* startinsert
     autocmd BufLeave term://* stopinsert
@@ -72,14 +72,16 @@ if exists(':tnoremap')
     tmap <silent> <C-w><right> <C-\><C-n><C-w><right>
     tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
     tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
-    tmap <silent> <C-w>q <C-\><C-n><C-w>q
+    "don't leave terminal buffers hanging around
+    tmap <silent> <C-w>q <C-\><C-n>:bd!<CR>
     "dwm mappings for f-keys
     tmap <silent> <F2> <C-\><C-n><C-w>W
     tmap <silent> <F3> <C-\><C-n><C-w>w
     tmap <silent> <F4> <C-\><C-n>:call DWM_Focus()<CR>
     tmap <silent> <F5> <C-\><C-n>:call DWM_ShrinkMaster()<CR>
     tmap <silent> <F6> <C-\><C-n>:call DWM_GrowMaster()<CR>
-    tmap <silent> <F7> <C-\><C-n>:exec DWM_Close()<CR>
+    "don't leave terminal buffers hanging around
+    tmap <silent> <F7> <C-\><C-n>:bd!<cr>
     tmap <silent> <F8> <C-\><C-n>:call DWM_New() <bar> terminal<CR>
     tmap <silent> <F9> <C-\><C-n>:call DWM_New()<CR>
 endif
@@ -96,6 +98,7 @@ let mapleader=" "
 "reload with Leader rl
 map <leader>rl :source ~/.vimrc<CR>
 set hidden
+setl bufhidden=delete | bnext
 set nowrap
 set tabstop=4
 set softtabstop=4
@@ -108,7 +111,7 @@ set lazyredraw
 set nu
 set autowrite
 set smartcase
-"set nosmartindent
+set smartindent
 "set autoindent
 "set copyindent    " copy the previous indentation on autoindenting
 "set autowrite
@@ -128,6 +131,8 @@ set hlsearch
 set autochdir
 set splitbelow
 set splitright
+set mouse=a
+
 "disable highlighting with esc
 nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 
@@ -137,7 +142,6 @@ hi EndOfBuffer ctermbg=black ctermfg=black guibg=black guifg=black
 
 "https://github.com/spolu/dwm.vim
 let g:dwm_map_keys = 0
-set mouse=a
 
 "move counter- and clockwise through windows
 nmap <silent> <F2> <C-w>W
@@ -235,7 +239,15 @@ command! -bang -nargs=* Ag
   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
   \                 <bang>0)
 
+function! s:fzf_statusline()
+  " Override statusline as you like
+  highlight fzf1 ctermfg=161 ctermbg=251
+  highlight fzf2 ctermfg=23 ctermbg=251
+  highlight fzf3 ctermfg=237 ctermbg=251
+  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
+endfunction
 
+autocmd! User FzfStatusLine call <SID>fzf_statusline()
 
 "rainbox_parenthesis -> https://github.com/luochen1990/rainbow
 let g:rainbow_active = 1
