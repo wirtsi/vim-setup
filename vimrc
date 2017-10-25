@@ -1,4 +1,4 @@
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.config/nvim/plugged')
   Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
   Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
   Plug 'junegunn/fzf.vim'
@@ -10,13 +10,12 @@ call plug#begin('~/.vim/plugged')
   Plug 'editorconfig/editorconfig-vim'
   Plug 'tpope/vim-rhubarb'
   Plug 'machakann/vim-swap'
-  Plug 'scrooloose/nerdcommenter'
+  Plug 'tpope/vim-commentary'
   Plug 'luochen1990/rainbow'
   Plug 'godlygeek/tabular'
   Plug 'airblade/vim-gitgutter'
   Plug 'matze/vim-move'
   Plug 'terryma/vim-multiple-cursors'
-  Plug 'jszakmeister/vim-togglecursor'
   Plug 'sheerun/vim-polyglot'
   Plug 'simnalamburt/vim-mundo'
   Plug 'w0rp/ale'
@@ -30,11 +29,14 @@ call plug#begin('~/.vim/plugged')
   Plug 'roxma/LanguageServer-php-neovim'
   Plug 'easymotion/vim-easymotion'
   Plug 'chriskempson/base16-vim'
+  Plug 'ajh17/Spacegray.vim'
   Plug 'ryanoasis/vim-devicons'
   Plug 'tpope/vim-surround'
   Plug 'spolu/dwm.vim'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
+  Plug 'mxw/vim-jsx'
+  Plug 'pangloss/vim-javascript'
 call plug#end()
 
 set encoding=utf-8
@@ -44,7 +46,7 @@ set noshowmode
 "fzf integration
 set rtp+=/usr/local/opt/fzf
 
-colorscheme base16-tomorrow-night
+colorscheme spacegray
 
 "Here goes some neovim specific settings like
 if has("nvim")
@@ -105,7 +107,8 @@ set softtabstop=4
 set shiftwidth=4
 set expandtab
 set cursorline
-set noswapfile
+set swapfile
+set dir=~/.config/nvim/swap
 set nowritebackup
 set lazyredraw
 set nu
@@ -299,7 +302,7 @@ let g:ale_set_quickfix = 1
 "https://github.com/autozimu/LanguageClient-neovim
 let g:LanguageClient_serverCommands = {
 \ 'python' : ['/usr/local/bin/pyls'],
-\ 'php' : ['php', '~/php/language-server/vendor/bin/php-language-server.php']
+\ 'php' : ['php', '~/php/language-server/vendor/bin/php-language-server.php'],
 \}
 let g:LanguageClient_autoStart = 0
 autocmd FileType php LanguageClientStart
@@ -353,3 +356,10 @@ nnoremap <leader>u :MundoToggle<CR>
 
 "https://github.com/tpope/vim-surround
 "cs<old><new>" or ds<char>
+
+"jsx highlighting
+let g:jsx_ext_required = 0
+
+"spacegray
+let g:spacegray_underline_search = 1
+let g:spacegray_italicize_comments = 1
