@@ -170,7 +170,7 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#excludes = ["term://*"]
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='base16_twilight'
+let g:airline_theme='base16'
 
 nmap <leader>1 <Plug>AirlineSelectTab1
 nmap <leader>2 <Plug>AirlineSelectTab2
@@ -220,12 +220,12 @@ set fillchars+=vert:│
 "Ctrl-N
 
 "fzf.vim -> https://github.com/junegunn/fzf.vim
-nnoremap <leader>t :Files<cr>
+nnoremap <leader>f :Files<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>r :History<cr>
 
 "Open the silver search in fzf-vim
-map <leader>f :Ag!<space>
+map <leader>s :Ag!<space>
 let g:fzf_buffers_jump = 1
 " Augmenting Ag command using fzf#vim#with_preview function
 "   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
@@ -298,6 +298,9 @@ vmap <Leader>: :Tabularize /:<CR>
 " Write this in your vimrc file
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
+let g:ale_sign_error = '●' " Less aggressive than the default '>>'
+let g:ale_sign_warning = '.'
+let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
 
 "https://github.com/autozimu/LanguageClient-neovim
 let g:LanguageClient_serverCommands = {
@@ -316,37 +319,8 @@ nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 
 "https://github.com/easymotion/vim-easymotion
-let g:EasyMotion_do_mapping = 0 " Disable default mappings
-
 " Turn on case insensitive feature
 let g:EasyMotion_smartcase = 1
-
-"Forward search
-" `f{char}{label}`
-nmap f <Plug>(easymotion-f)
-
-"Backward search
-" `b{char}{label}`
-nmap b <Plug>(easymotion-b)
-
-"Search one char
-" `s{char}{label}`
-nmap s <Plug>(easymotion-s)
-
-"Search two chars
-" `<Leader>s{char}{char}{label}`
-nmap <Leader>s <Plug>(easymotion-s2)
-
-"Search word forward
-nmap w <Plug>(easymotion-w)
-
-"Search word backward
-nmap b <Plug>(easymotion-b)
-
-" JK motions: Line motions. Keep defaults because easymotion doesn't support
-" line jumps
-map <leader>j <Plug>(easymotion-j)
-map <leader>k <Plug>(easymotion-k)
 
 "https://github.com/simnalamburt/vim-mundo/
 nnoremap <leader>u :MundoToggle<CR>
