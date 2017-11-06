@@ -8,7 +8,6 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'tpope/vim-fugitive'
   Plug 'editorconfig/editorconfig-vim'
-  Plug 'tpope/vim-rhubarb'
   Plug 'machakann/vim-swap'
   Plug 'tpope/vim-commentary'
   Plug 'luochen1990/rainbow'
@@ -16,7 +15,7 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'airblade/vim-gitgutter'
   Plug 'matze/vim-move'
   Plug 'terryma/vim-multiple-cursors'
-  Plug 'sheerun/vim-polyglot'
+  " Plug 'sheerun/vim-polyglot'
   Plug 'simnalamburt/vim-mundo'
   Plug 'w0rp/ale'
   Plug 'octref/RootIgnore'
@@ -35,8 +34,9 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'spolu/dwm.vim'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
-  Plug 'mxw/vim-jsx'
   Plug 'pangloss/vim-javascript'
+  Plug 'mxw/vim-jsx'
+  Plug 'roxma/nvim-completion-manager'
 call plug#end()
 
 set encoding=utf-8
@@ -55,7 +55,8 @@ endif
 
 if !has("gui_vimr")
     "vimr doesn't like this
-    set guifont=Meslo\ LG\ M\ Regular\ for\ Powerline\ Nerd\ Font\ Complete:h15
+    "https://github.com/taohex/fonts/blob/master/Menlo%20Regular%20for%20Powerline%20Nerd%20Font%20Complete.otf
+    set guifont=MesloLGM\ Nerd\ Font\ Mono\ RegularforPowerline:h14
 else
     "Alt-right|left in vimr for buffer switches
     nmap <A-Left>  <Plug>AirlineSelectPrevTab
@@ -98,7 +99,7 @@ syntax on
 "filetype plugin indent off
 let mapleader=" "
 "reload with Leader rl
-map <leader>rl :source ~/.vimrc<CR>
+map <leader>rl :source ~/.config/nvim/vimrc<CR>
 set hidden
 setl bufhidden=delete | bnext
 set nowrap
@@ -225,7 +226,7 @@ nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>r :History<cr>
 
 "Open the silver search in fzf-vim
-map <leader>s :Ag!<space>
+map <leader>s :Rg!<space>
 let g:fzf_buffers_jump = 1
 " Augmenting Ag command using fzf#vim#with_preview function
 "   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
@@ -242,6 +243,11 @@ command! -bang -nargs=* Ag
   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
   \                 <bang>0)
 
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>),
+  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \                 <bang>0)
 function! s:fzf_statusline()
   " Override statusline as you like
   highlight fzf1 ctermfg=161 ctermbg=251
@@ -301,8 +307,11 @@ let g:ale_set_quickfix = 1
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
 let g:ale_sign_warning = '.'
 let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
+nnoremap <leader>e :cr<cr> " Leader+e for next error
 
 "https://github.com/autozimu/LanguageClient-neovim
+"yarn global add javascript-typescript-langserver
+"https://fortes.com/2017/language-server-neovim/
 let g:LanguageClient_serverCommands = {
 \ 'python' : ['/usr/local/bin/pyls'],
 \ 'php' : ['php', '~/php/language-server/vendor/bin/php-language-server.php'],
@@ -310,10 +319,23 @@ let g:LanguageClient_serverCommands = {
 let g:LanguageClient_autoStart = 0
 autocmd FileType php LanguageClientStart
 autocmd FileType python LanguageClientStart
+autocmd FileType javascript LanguageClientStart
+
+" Minimal LSP configuration for JavaScript
+let g:LanguageClient_serverCommands = {}
+if executable('javascript-typescript-stdio')
+  let g:LanguageClient_serverCommands.javascript = ['javascript-typescript-stdio']
+  " Use LanguageServer for omnifunc completion
+  autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
+else
+  echo "javascript-typescript-stdio not installed!\n"
+  :cq
+endif
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> rn :call LanguageClient_textDocument_rename()<CR>
 nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
+nnoremap <silent> gs :call LanguageClient_textDocument_documentSymbol()<CR>
 
 "https://github.com/editorconfig/editorconfig-vim
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
@@ -332,7 +354,7 @@ nnoremap <leader>u :MundoToggle<CR>
 "cs<old><new>" or ds<char>
 
 "jsx highlighting
-let g:jsx_ext_required = 0
+" let g:jsx_ext_required = 0
 
 "spacegray
 let g:spacegray_underline_search = 1
