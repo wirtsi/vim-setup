@@ -39,6 +39,7 @@ call plug#end()
 set encoding=utf-8
 scriptencoding utf-8
 set noshowmode
+set scrolloff=15
 
 "fzf integration
 set rtp+=/usr/local/opt/fzf
