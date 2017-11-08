@@ -1,11 +1,13 @@
 call plug#begin('~/.config/nvim/plugged')
   Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
   Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'roxma/nvim-completion-manager'
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'Xuyuanp/nerdtree-git-plugin'
+  Plug 'w0rp/ale'
   Plug 'rizzatti/dash.vim'
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'tpope/vim-fugitive'
   Plug 'editorconfig/editorconfig-vim'
   Plug 'machakann/vim-swap'
@@ -17,17 +19,13 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'terryma/vim-multiple-cursors'
   " Plug 'sheerun/vim-polyglot'
   Plug 'simnalamburt/vim-mundo'
-  Plug 'w0rp/ale'
-  Plug 'octref/RootIgnore'
-  Plug 'tpope/vim-dispatch'
+  " Plug 'tpope/vim-dispatch'
   if has('nvim')
     " Adds neovim support to vim-dispatch
-    Plug 'radenling/vim-dispatch-neovim'
+    " Plug 'radenling/vim-dispatch-neovim'
   endif
   Plug 'Shougo/echodoc.vim'
-  Plug 'roxma/LanguageServer-php-neovim'
   Plug 'easymotion/vim-easymotion'
-  Plug 'chriskempson/base16-vim'
   Plug 'ajh17/Spacegray.vim'
   Plug 'ryanoasis/vim-devicons'
   Plug 'tpope/vim-surround'
@@ -36,7 +34,6 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'vim-airline/vim-airline-themes'
   Plug 'pangloss/vim-javascript'
   Plug 'mxw/vim-jsx'
-  Plug 'roxma/nvim-completion-manager'
 call plug#end()
 
 set encoding=utf-8
@@ -200,7 +197,7 @@ let NERDTreeMapActivateNode='<right>'
 let NERDTreeShowHidden=0
 let loaded_netrwPlugin=1
 let NERDTreeRespectWildIgnore=1
-let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp','/target']
+let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp','/target', 'node_modules', 'coverage', 'build']
 let g:NERDTreeQuitOnOpen = 1
 "disable some stuff in nerdtree window
 autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
@@ -221,12 +218,18 @@ set fillchars+=vert:│
 "Ctrl-N
 
 "fzf.vim -> https://github.com/junegunn/fzf.vim
-nnoremap <leader>f :Files<cr>
+function! s:find_git_root()
+  return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
+endfunction
+
+command! ProjectFiles execute 'Files' s:find_git_root()
+
+nnoremap <leader>f :ProjectFiles<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>r :History<cr>
 
 "Open the silver search in fzf-vim
-map <leader>s :Rg!<space>
+map <leader>s :Ag!<space>
 let g:fzf_buffers_jump = 1
 " Augmenting Ag command using fzf#vim#with_preview function
 "   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
@@ -244,7 +247,7 @@ command! -bang -nargs=* Ag
   \                 <bang>0)
 
 command! -bang -nargs=* Rg
-  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>),
+  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!node_modules/*" ---glob "!coverage/*" --glob "!build/*" --color "always" '.shellescape(<q-args>),
   \                 <bang>0 ? fzf#vim#with_preview('up:60%')
   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
   \                 <bang>0)
@@ -335,7 +338,7 @@ nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> rn :call LanguageClient_textDocument_rename()<CR>
 nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
-nnoremap <silent> gs :call LanguageClient_textDocument_documentSymbol()<CR>
+nnoremap <silent> go :call LanguageClient_textDocument_documentSymbol()<CR>
 
 "https://github.com/editorconfig/editorconfig-vim
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
