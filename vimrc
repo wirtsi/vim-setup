@@ -5,7 +5,7 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'roxma/nvim-completion-manager'
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
-  Plug 'Xuyuanp/nerdtree-git-plugin'
+  " Plug 'Xuyuanp/nerdtree-git-plugin'
   Plug 'w0rp/ale'
   Plug 'rizzatti/dash.vim'
   Plug 'tpope/vim-fugitive'
@@ -19,10 +19,10 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'terryma/vim-multiple-cursors'
   " Plug 'sheerun/vim-polyglot'
   Plug 'simnalamburt/vim-mundo'
-  " Plug 'tpope/vim-dispatch'
+  Plug 'tpope/vim-dispatch'
   if has('nvim')
     " Adds neovim support to vim-dispatch
-    " Plug 'radenling/vim-dispatch-neovim'
+    Plug 'radenling/vim-dispatch-neovim'
   endif
   Plug 'Shougo/echodoc.vim'
   Plug 'easymotion/vim-easymotion'
@@ -40,6 +40,12 @@ set encoding=utf-8
 scriptencoding utf-8
 set noshowmode
 set scrolloff=15
+
+"fix yaml indent
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+cmap w!! w !sudo tee > /dev/null %
 
 "fzf integration
 set rtp+=/usr/local/opt/fzf
