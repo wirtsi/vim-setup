@@ -1,11 +1,14 @@
 call plug#begin('~/.config/nvim/plugged')
-  Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'autozimu/LanguageClient-neovim', {
+  \ 'branch': 'next',
+  \ 'do': './install.sh'
+  \ }
   Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'roxma/nvim-completion-manager'
+  " Plug 'roxma/nvim-completion-manager'
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
-  " Plug 'Xuyuanp/nerdtree-git-plugin'
+  Plug 'Xuyuanp/nerdtree-git-plugin'
   Plug 'w0rp/ale'
   Plug 'rizzatti/dash.vim'
   Plug 'tpope/vim-fugitive'
@@ -324,19 +327,21 @@ nnoremap <leader>e :cr<cr> " Leader+e for next error
 "https://fortes.com/2017/language-server-neovim/
 let g:LanguageClient_serverCommands = {
 \ 'python' : ['/usr/local/bin/pyls'],
-\ 'php' : ['php', '~/php/language-server/vendor/bin/php-language-server.php'],
+\ 'php' : ['php', $HOME.'/php/language-server/vendor/bin/php-language-server.php'],
+\ 'javascript' : ['/usr/local/bin/javascript-typescript-stdio'],
+\ 'javascript.jsx' : ['/usr/local/bin/javascript-typescript-stdio']
 \}
 let g:LanguageClient_autoStart = 0
 autocmd FileType php LanguageClientStart
 autocmd FileType python LanguageClientStart
-autocmd FileType javascript LanguageClientStart
 
 " Minimal LSP configuration for JavaScript
-let g:LanguageClient_serverCommands = {}
 if executable('javascript-typescript-stdio')
-  let g:LanguageClient_serverCommands.javascript = ['javascript-typescript-stdio']
   " Use LanguageServer for omnifunc completion
+  autocmd FileType javascript LanguageClientStart
+  autocmd FileType javascript.jsx LanguageClientStart
   autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
+  autocmd FileType javascript.jsx setlocal omnifunc=LanguageClient#complete
 else
   echo "javascript-typescript-stdio not installed!\n"
   :cq
@@ -364,7 +369,7 @@ nnoremap <leader>u :MundoToggle<CR>
 "cs<old><new>" or ds<char>
 
 "jsx highlighting
-" let g:jsx_ext_required = 0
+let g:jsx_ext_required = 0
 
 "spacegray
 let g:spacegray_underline_search = 1
