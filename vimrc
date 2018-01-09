@@ -4,6 +4,7 @@ call plug#begin('~/.config/nvim/plugged')
   \ 'do': './install.sh'
   \ }
   Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
+  Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   " Plug 'roxma/nvim-completion-manager'
   Plug 'junegunn/fzf.vim'
@@ -59,11 +60,10 @@ colorscheme spacegray
 if has("nvim")
   set termguicolors
 endif
-
+"Font is at https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Meslo/M
 if !has("gui_vimr")
     "vimr doesn't like this
-    "https://github.com/taohex/fonts/blob/master/Menlo%20Regular%20for%20Powerline%20Nerd%20Font%20Complete.otf
-    set guifont=MesloLGM\ Nerd\ Font\ Mono\ RegularforPowerline:h14
+    set guifont=MesloLGM\ Nerd\ Font\ RegularforPowerline:h14
 else
     "Alt-right|left in vimr for buffer switches
     nmap <A-Left>  <Plug>AirlineSelectPrevTab
@@ -115,9 +115,10 @@ set softtabstop=4
 set shiftwidth=4
 set expandtab
 set cursorline
-set swapfile
+set noswapfile
 set dir=~/.config/nvim/swap
-set nowritebackup
+set backupdir=~/.config/nvim/backup
+set undodir=~/.config/nvim/undo
 set lazyredraw
 set nu
 set autowrite
@@ -216,8 +217,9 @@ autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
 
 "deoplete -> https://github.com/Shougo/deoplete.nvim
 let g:deoplete#enable_at_startup = 1
-let b:deoplete_ignore_sources = ['buffer', 'neco-syntax']
-
+" let b:deoplete_ignore_sources = ['buffer', 'neco-syntax']
+let g:deoplete#ignore_sources = get(g:, 'deoplete#ignore_sources', {})
+let g:deoplete#ignore_sources.php = ['omni']
 "fugitive -> https://github.com/tpope/vim-fugitive
 
 "gitgutter -> https://github.com/airblade/vim-gitgutter
