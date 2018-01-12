@@ -21,7 +21,6 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'airblade/vim-gitgutter'
   Plug 'matze/vim-move'
   Plug 'terryma/vim-multiple-cursors'
-  " Plug 'sheerun/vim-polyglot'
   Plug 'simnalamburt/vim-mundo'
   Plug 'tpope/vim-dispatch'
   if has('nvim')
@@ -33,7 +32,7 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'ajh17/Spacegray.vim'
   Plug 'ryanoasis/vim-devicons'
   Plug 'tpope/vim-surround'
-  Plug 'spolu/dwm.vim'
+  Plug 'zhamlin/tiler.vim'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'pangloss/vim-javascript'
@@ -72,11 +71,12 @@ endif
 
 "Terminal Mode mapping. We dont want buffers insiide terminal windows
 if exists(':tnoremap')
-    autocmd TermOpen * setlocal nonumber norelativenumber
-    autocmd TermOpen,BufEnter,BufLeave setlocal statusline=%{b:term_title}
+    autocmd BufEnter term://* setlocal nonumber norelativenumber
+    autocmd TermOpen,BufEnter,BufLeave term://* setlocal nonumber norelativenumber statusline=%{b:term_title}
     autocmd BufWinEnter,WinEnter term://* startinsert
     autocmd BufLeave term://* stopinsert
     autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
+    tnoremap <Esc> <C-\><C-n>
     "fix standard windows commands in terminal mode
     tmap <silent> <C-w><left> <C-\><C-n><C-w><left>
     tmap <silent> <C-w><right> <C-\><C-n><C-w><right>
@@ -84,16 +84,11 @@ if exists(':tnoremap')
     tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
     "don't leave terminal buffers hanging around
     tmap <silent> <C-w>q <C-\><C-n>:bd!<CR>
-    "dwm mappings for f-keys
-    tmap <silent> <F2> <C-\><C-n><C-w>W
-    tmap <silent> <F3> <C-\><C-n><C-w>w
-    tmap <silent> <F4> <C-\><C-n>:call DWM_Focus()<CR>
-    tmap <silent> <F5> <C-\><C-n>:call DWM_ShrinkMaster()<CR>
-    tmap <silent> <F6> <C-\><C-n>:call DWM_GrowMaster()<CR>
-    "don't leave terminal buffers hanging around
-    tmap <silent> <F7> <C-\><C-n>:bd!<cr>
-    tmap <silent> <F8> <C-\><C-n>:call DWM_New() <bar> terminal<CR>
-    tmap <silent> <F9> <C-\><C-n>:call DWM_New()<CR>
+    tmap <silent> <C-w>z <Plug>TilerZoom
+    tmap <silent> <C-w><Space> <Plug>TilerFocus
+    tmap <silent> <C-w>t :call tiler#create_window() <bar> call termopen('/usr/local/bin/fish') <bar> call tiler#rotate_backwards() <CR>
+    tmap <silent> <C-w>. <plug>TilerRotateForwards
+    tmap <silent> <C-w>, <plug>TilerRotateBackwards
 endif
 
 "clipboard sharing with osx
@@ -152,22 +147,6 @@ nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 hi EndOfBuffer ctermbg=black ctermfg=black guibg=black guifg=black
 
 
-"https://github.com/spolu/dwm.vim
-let g:dwm_map_keys = 0
-
-"move counter- and clockwise through windows
-nmap <silent> <F2> <C-w>W
-nmap <silent> <F3> <C-w>w
-
-"zoom current window
-nmap <silent> <F4> :call DWM_Focus()<CR>
-
-"shrink and grow master
-nmap <silent> <F5> :call DWM_ShrinkMaster()<CR>
-nmap <silent> <F6> :call DWM_GrowMaster()<CR>
-nmap <silent> <F7> :exec DWM_Close()<CR>
-nmap <silent> <F8> :call DWM_New() <bar> terminal<CR>
-nmap <silent> <F9> :call DWM_New()<CR>
 
 
 "vim-move -> https://github.com/matze/vim-move
@@ -199,7 +178,7 @@ nmap <leader>T :enew<cr>
 nmap <leader>bq :bp <bar>bd #<BAR>execute "normal \<Plug>AirlineSelectTab1"<cr>
 
 "nerdtree -> https://github.com/scrooloose/nerdtree
-map <Leader>n :NERDTreeToggle<CR>
+map <Leader>n :NERDTreeToggle <bar> TilerReorder<CR>
 "show current file in nerdtree
 nmap <leader>l :NERDTreeFind<CR>
 "autocmd StdinReadPre * let s:std_in=1
@@ -376,3 +355,15 @@ let g:jsx_ext_required = 0
 "spacegray
 let g:spacegray_underline_search = 1
 let g:spacegray_italicize_comments = 1
+"https://github.com/zhamlin/tiler.vim
+nmap <C-w>z <Plug>TilerZoom
+nmap <C-w><Space> <Plug>TilerFocus
+nmap <C-w>t :call tiler#create_window() <bar> call termopen('/usr/local/bin/fish') <bar> call tiler#rotate_backwards() <CR>
+nmap <C-w>. <plug>TilerRotateForwards
+nmap <C-w>, <plug>TilerRotateBackwards
+let g:tiler#popup#windows = {
+    \    'quickfix': { 'position': 'bottom', 'size': 10, 'filetype': 'qf', 'order': 3 },
+    \    'nerdtree': { 'position': 'right', 'size': 10, 'filetype': 'nerdtree', 'order': 2 },
+    \    'tagbar': { 'position': 'right', 'size': 10, 'filetype': 'tagbar', 'order': 1 },
+\ }
+let g:tiler#master#size = 70
