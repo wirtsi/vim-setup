@@ -6,6 +6,7 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
   Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'derekwyatt/vim-scala'
   " Plug 'roxma/nvim-completion-manager'
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
@@ -37,6 +38,7 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'vim-airline/vim-airline-themes'
   Plug 'pangloss/vim-javascript'
   Plug 'mxw/vim-jsx'
+  Plug 'airblade/vim-rooter'
 call plug#end()
 
 set encoding=utf-8
@@ -83,12 +85,13 @@ if exists(':tnoremap')
     tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
     tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
     "don't leave terminal buffers hanging around
-    tmap <silent> <C-w>q <C-\><C-n>:bd!<CR>
-    tmap <silent> <C-w>z <Plug>TilerZoom
-    tmap <silent> <C-w><Space> <Plug>TilerFocus
-    tmap <silent> <C-w>t :call tiler#create_window() <bar> call termopen('/usr/local/bin/fish') <bar> call tiler#rotate_backwards() <CR>
-    tmap <silent> <C-w>. <plug>TilerRotateForwards
-    tmap <silent> <C-w>, <plug>TilerRotateBackwards
+    " tmap <silent> <C-w>q <C-\><C-n>:bd!<CR>
+    tmap <silent> <C-w>z <C-\><C-n><Plug>TilerZoom
+    tmap <silent> <C-w><Space> <C-\><C-n><Plug>TilerFocus
+    tmap <silent> <C-w>t <C-\><C-n>:call tiler#create_window() <bar> call termopen('/usr/local/bin/fish') <CR>
+    tmap <silent> <C-w>. <C-\><C-n><plug>TilerRotateForwards
+    tmap <silent> <C-w>, <C-\><C-n><plug>TilerRotateBackwards
+    tmap <silent> <C-w>q <C-\><C-n>:bd!<bar><Plug>TilerResize 70<CR>
 endif
 
 "clipboard sharing with osx
@@ -103,7 +106,7 @@ let mapleader=" "
 "reload with Leader rl
 map <leader>rl :source ~/.config/nvim/vimrc<CR>
 set hidden
-setl bufhidden=delete | bnext
+" setl bufhidden=delete | bnext
 set nowrap
 set tabstop=4
 set softtabstop=4
@@ -177,8 +180,11 @@ nmap <leader>T :enew<cr>
 "needs some massaging so vim doesnt focus a terminal after closing the buffer
 nmap <leader>bq :bp <bar>bd #<BAR>execute "normal \<Plug>AirlineSelectTab1"<cr>
 
+"Previous buffer with space space
+nmap <leader><leader> :bp<cr>
+
 "nerdtree -> https://github.com/scrooloose/nerdtree
-map <Leader>n :NERDTreeToggle <bar> TilerReorder<CR>
+map <Leader>n :NERDTreeToggle <bar> TilerResize 70<CR>
 "show current file in nerdtree
 nmap <leader>l :NERDTreeFind<CR>
 "autocmd StdinReadPre * let s:std_in=1
@@ -361,9 +367,14 @@ nmap <C-w><Space> <Plug>TilerFocus
 nmap <C-w>t :call tiler#create_window() <bar> call termopen('/usr/local/bin/fish') <bar> call tiler#rotate_backwards() <CR>
 nmap <C-w>. <plug>TilerRotateForwards
 nmap <C-w>, <plug>TilerRotateBackwards
+nmap <C-w>q <Plug>TilerClose
 let g:tiler#popup#windows = {
     \    'quickfix': { 'position': 'bottom', 'size': 10, 'filetype': 'qf', 'order': 3 },
-    \    'nerdtree': { 'position': 'right', 'size': 10, 'filetype': 'nerdtree', 'order': 2 },
-    \    'tagbar': { 'position': 'right', 'size': 10, 'filetype': 'tagbar', 'order': 1 },
+    \    'nerdtree': { 'position': 'left', 'size': 10, 'filetype': 'nerdtree', 'order': 1 },
+    \    'tagbar': { 'position': 'right', 'size': 10, 'filetype': 'tagbar', 'order': 2 },
 \ }
 let g:tiler#master#size = 70
+
+"quickfix window
+nmap <leader>e  :cw<CR>
+nmap ge :cn<CR>
