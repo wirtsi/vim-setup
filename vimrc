@@ -71,6 +71,8 @@ else
     nmap <A-Right> <Plug>AirlineSelectNextTab
 endif
 
+autocmd WinLeave * nnoremap <buffer> ;t :call tiler#reorder()<cr>
+
 "Terminal Mode mapping. We dont want buffers insiide terminal windows
 if exists(':tnoremap')
     autocmd BufEnter term://* setlocal nonumber norelativenumber
@@ -88,7 +90,7 @@ if exists(':tnoremap')
     " tmap <silent> <C-w>q <C-\><C-n>:bd!<CR>
     tmap <silent> <C-w>z <C-\><C-n><Plug>TilerZoom
     tmap <silent> <C-w><Space> <C-\><C-n><Plug>TilerFocus
-    tmap <silent> <C-w>t <C-\><C-n>:call tiler#create_window() <bar> call termopen('/usr/local/bin/fish') <CR>
+    tmap <silent> <C-w>t <C-\><C-n>:call tiler#create_window() <bar> call termopen('/usr/local/bin/fish') <bar> call tiler#rotate_backwards() <CR>
     tmap <silent> <C-w>. <C-\><C-n><plug>TilerRotateForwards
     tmap <silent> <C-w>, <C-\><C-n><plug>TilerRotateBackwards
     tmap <silent> <C-w>q <C-\><C-n>:bd!<bar><Plug>TilerResize 70<CR>
@@ -307,7 +309,6 @@ let g:ale_set_quickfix = 1
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
 let g:ale_sign_warning = '.'
 let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
-nnoremap <leader>e :cr<cr> " Leader+e for next error
 
 "https://github.com/autozimu/LanguageClient-neovim
 "yarn global add javascript-typescript-langserver
