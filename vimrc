@@ -30,7 +30,7 @@ call plug#begin('~/.config/nvim/plugged')
   endif
   Plug 'Shougo/echodoc.vim'
   Plug 'easymotion/vim-easymotion'
-  Plug 'ajh17/Spacegray.vim'
+  Plug 'chriskempson/base16-vim'
   Plug 'ryanoasis/vim-devicons'
   Plug 'tpope/vim-surround'
   Plug 'zhamlin/tiler.vim'
@@ -55,7 +55,7 @@ cmap w!! w !sudo tee > /dev/null %
 "fzf integration
 set rtp+=/usr/local/opt/fzf
 
-colorscheme Tomorrow-Night
+colorscheme base16-tomorrow-night
 
 "Here goes some neovim specific settings like
 if has("nvim")
