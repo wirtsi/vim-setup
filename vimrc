@@ -55,7 +55,7 @@ cmap w!! w !sudo tee > /dev/null %
 "fzf integration
 set rtp+=/usr/local/opt/fzf
 
-colorscheme spacegray
+colorscheme Tomorrow-Night
 
 "Here goes some neovim specific settings like
 if has("nvim")
@@ -71,7 +71,7 @@ else
     nmap <A-Right> <Plug>AirlineSelectNextTab
 endif
 
-autocmd WinLeave * nnoremap <buffer> ;t :call tiler#reorder()<cr>
+autocmd WinLeave,WinEnter * nnoremap <buffer> ;t :call tiler#reorder()<cr>
 
 "Terminal Mode mapping. We dont want buffers insiide terminal windows
 if exists(':tnoremap')
@@ -79,6 +79,7 @@ if exists(':tnoremap')
     autocmd TermOpen,BufEnter,BufLeave term://* setlocal nonumber norelativenumber statusline=%{b:term_title}
     autocmd BufWinEnter,WinEnter term://* startinsert
     autocmd BufLeave term://* stopinsert
+    autocmd WinLeave,WinEnter term://* nnoremap <buffer> ;t :call tiler#reorder()<cr>
     autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
     tnoremap <Esc> <C-\><C-n>
     "fix standard windows commands in terminal mode
@@ -93,7 +94,7 @@ if exists(':tnoremap')
     tmap <silent> <C-w>t <C-\><C-n>:call tiler#create_window() <bar> call termopen('/usr/local/bin/fish') <bar> call tiler#rotate_backwards() <CR>
     tmap <silent> <C-w>. <C-\><C-n><plug>TilerRotateForwards
     tmap <silent> <C-w>, <C-\><C-n><plug>TilerRotateBackwards
-    tmap <silent> <C-w>q <C-\><C-n>:bd!<bar><Plug>TilerResize 70<CR>
+    tmap <silent> <C-w>q <C-\><C-n>:bd! <bar> <Plug>TilerResize 70<CR>
 endif
 
 "clipboard sharing with osx
@@ -163,7 +164,7 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#excludes = ["term://*"]
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='base16'
+let g:airline_theme='tomorrow'
 
 nmap <leader>1 <Plug>AirlineSelectTab1
 nmap <leader>2 <Plug>AirlineSelectTab2
@@ -217,6 +218,7 @@ set fillchars+=vert:│
 "Ctrl-N
 
 "fzf.vim -> https://github.com/junegunn/fzf.vim
+"find project root
 function! s:find_git_root()
   return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
 endfunction
