@@ -44,6 +44,9 @@ scriptencoding utf-8
 set noshowmode
 set scrolloff=15
 
+let g:python_host_prog = '/usr/local/bin/python2'
+let g:python3_host_prog = '/usr/local/bin/python3'
+
 "fix yaml indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
