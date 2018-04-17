@@ -1,7 +1,7 @@
 call plug#begin('~/.config/nvim/plugged')
   Plug 'autozimu/LanguageClient-neovim', {
   \ 'branch': 'next',
-  \ 'do': './install.sh'
+  \ 'do': 'bash install.sh'
   \ }
   Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install; and composer run-script parse-stubs'}
   Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
@@ -210,8 +210,8 @@ nnoremap <leader>f :ProjectFiles<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>r :History<cr>
 
-"Open the silver search in fzf-vim
-map <leader>s :Ag!<space>
+"Open the ripgrep in fzf-vim
+map <leader>s :Rg!<space>
 let g:fzf_buffers_jump = 1
 " Augmenting Ag command using fzf#vim#with_preview function
 "   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
@@ -228,11 +228,15 @@ command! -bang -nargs=* Ag
   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
   \                 <bang>0)
 
+
+" Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
 command! -bang -nargs=* Rg
-  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!node_modules/*" ---glob "!coverage/*" --glob "!build/*" --color "always" '.shellescape(<q-args>),
-  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \                 <bang>0)
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
 function! s:fzf_statusline()
   " Override statusline as you like
   " highlight fzf1 ctermfg=161 ctermbg=251
@@ -302,15 +306,10 @@ let g:LanguageClient_serverCommands = {
 \ 'javascript' : ['/usr/local/bin/javascript-typescript-stdio'],
 \ 'javascript.jsx' : ['/usr/local/bin/javascript-typescript-stdio']
 \}
-let g:LanguageClient_autoStart = 0
-autocmd FileType php LanguageClientStart
-autocmd FileType python LanguageClientStart
 
 " Minimal LSP configuration for JavaScript
 if executable('javascript-typescript-stdio')
   " Use LanguageServer for omnifunc completion
-  autocmd FileType javascript LanguageClientStart
-  autocmd FileType javascript.jsx LanguageClientStart
   autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
   autocmd FileType javascript.jsx setlocal omnifunc=LanguageClient#complete
 else
