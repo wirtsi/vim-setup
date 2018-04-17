@@ -3,7 +3,7 @@ call plug#begin('~/.config/nvim/plugged')
   \ 'branch': 'next',
   \ 'do': './install.sh'
   \ }
-  Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install && composer run-script parse-stubs'}
+  Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install; and composer run-script parse-stubs'}
   Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'derekwyatt/vim-scala'
