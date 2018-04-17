@@ -7,7 +7,6 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'derekwyatt/vim-scala'
-  " Plug 'roxma/nvim-completion-manager'
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -33,7 +32,6 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'chriskempson/base16-vim'
   Plug 'ryanoasis/vim-devicons'
   Plug 'tpope/vim-surround'
-  Plug 'zhamlin/tiler.vim'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'pangloss/vim-javascript'
@@ -71,15 +69,11 @@ else
     nmap <A-Right> <Plug>AirlineSelectNextTab
 endif
 
-autocmd WinLeave,WinEnter * nnoremap <buffer> ;t :call tiler#reorder()<cr>
-
 "Terminal Mode mapping. We dont want buffers insiide terminal windows
 if exists(':tnoremap')
-    autocmd BufEnter term://* setlocal nonumber norelativenumber
     autocmd TermOpen,BufEnter,BufLeave term://* setlocal nonumber norelativenumber statusline=%{b:term_title}
-    autocmd BufWinEnter,WinEnter term://* startinsert
+    autocmd TermOpen term://* startinsert
     autocmd BufLeave term://* stopinsert
-    autocmd WinLeave,WinEnter term://* nnoremap <buffer> ;t :call tiler#reorder()<cr>
     autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
     tnoremap <Esc> <C-\><C-n>
     "fix standard windows commands in terminal mode
@@ -87,14 +81,7 @@ if exists(':tnoremap')
     tmap <silent> <C-w><right> <C-\><C-n><C-w><right>
     tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
     tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
-    "don't leave terminal buffers hanging around
-    " tmap <silent> <C-w>q <C-\><C-n>:bd!<CR>
-    tmap <silent> <C-w>z <C-\><C-n><Plug>TilerZoom
-    tmap <silent> <C-w><Space> <C-\><C-n><Plug>TilerFocus
-    tmap <silent> <C-w>t <C-\><C-n>:call tiler#create_window() <bar> call termopen('/usr/local/bin/fish') <bar> call tiler#rotate_backwards() <CR>
-    tmap <silent> <C-w>. <C-\><C-n><plug>TilerRotateForwards
-    tmap <silent> <C-w>, <C-\><C-n><plug>TilerRotateBackwards
-    tmap <silent> <C-w>q <C-\><C-n>:bd! <bar> <Plug>TilerResize 70<CR>
+    tmap <silent> <C-w>q <C-\><C-n><C-w>q
 endif
 
 "clipboard sharing with osx
@@ -103,13 +90,10 @@ set clipboard=unnamed
 set number
 set relativenumber
 syntax on
-"don't let vim override the settings here
-"filetype plugin indent off
 let mapleader=" "
 "reload with Leader rl
 map <leader>rl :source ~/.config/nvim/vimrc<CR>
 set hidden
-" setl bufhidden=delete | bnext
 set nowrap
 set tabstop=4
 set softtabstop=4
@@ -125,9 +109,6 @@ set nu
 set autowrite
 set smartcase
 set smartindent
-"set autoindent
-"set copyindent    " copy the previous indentation on autoindenting
-"set autowrite
 set shiftround    " use multiple of shiftwidth when indenting with '<' and '>
 set showmatch
 set smarttab      " insert tabs on the start of a line according to
@@ -152,19 +133,16 @@ nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 "don't show tilde for empty lines
 hi EndOfBuffer ctermbg=black ctermfg=black guibg=black guifg=black
 
-
-
-
 "vim-move -> https://github.com/matze/vim-move
 let g:move_key_modifier = 'C'
 
 "airline -> https://github.com/vim-airline/vim-airline
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#excludes = ["term://*"]
+let g:airline#extensions#tabline#enabled = 2
+" let g:airline#extensions#tabline#excludes = ["term://*"]
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='tomorrow'
+let g:airline_theme='base16_tomorrow'
 
 nmap <leader>1 <Plug>AirlineSelectTab1
 nmap <leader>2 <Plug>AirlineSelectTab2
@@ -179,9 +157,12 @@ nmap <leader><left> <Plug>AirlineSelectPrevTab
 nmap <leader><right> <Plug>AirlineSelectNextTab
 
 "Allow creating new buffers with leader T and closing with leader bq
-nmap <leader>T :enew<cr>
+nmap <leader>t :enew <bar> terminal<cr>
+nmap <leader>vt :vnew <bar> terminal<cr>
+nmap <leader>ht :new <bar> terminal<cr>
 "needs some massaging so vim doesnt focus a terminal after closing the buffer
-nmap <leader>bq :bp <bar>bd #<BAR>execute "normal \<Plug>AirlineSelectTab1"<cr>
+nmap <leader>bq :bp <bar>bd! #<cr>
+" <BAR>execute "normal \<Plug>AirlineSelectTab1"<cr>
 
 "Previous buffer with space space
 nmap <leader><leader> :bp<cr>
@@ -254,10 +235,10 @@ command! -bang -nargs=* Rg
   \                 <bang>0)
 function! s:fzf_statusline()
   " Override statusline as you like
-  highlight fzf1 ctermfg=161 ctermbg=251
-  highlight fzf2 ctermfg=23 ctermbg=251
-  highlight fzf3 ctermfg=237 ctermbg=251
-  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
+  " highlight fzf1 ctermfg=161 ctermbg=251
+  " highlight fzf2 ctermfg=23 ctermbg=251
+  " highlight fzf3 ctermfg=237 ctermbg=251
+  " setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
 endfunction
 
 autocmd! User FzfStatusLine call <SID>fzf_statusline()
@@ -360,23 +341,6 @@ nnoremap <leader>u :MundoToggle<CR>
 
 "jsx highlighting
 let g:jsx_ext_required = 0
-
-"spacegray
-let g:spacegray_underline_search = 1
-let g:spacegray_italicize_comments = 1
-"https://github.com/zhamlin/tiler.vim
-nmap <C-w>z <Plug>TilerZoom
-nmap <C-w><Space> <Plug>TilerFocus
-nmap <C-w>t :call tiler#create_window() <bar> call termopen('/usr/local/bin/fish') <bar> call tiler#rotate_backwards() <CR>
-nmap <C-w>. <plug>TilerRotateForwards
-nmap <C-w>, <plug>TilerRotateBackwards
-nmap <C-w>q <Plug>TilerClose
-let g:tiler#popup#windows = {
-    \    'quickfix': { 'position': 'bottom', 'size': 10, 'filetype': 'qf', 'order': 3 },
-    \    'nerdtree': { 'position': 'left', 'size': 10, 'filetype': 'nerdtree', 'order': 1 },
-    \    'tagbar': { 'position': 'right', 'size': 10, 'filetype': 'tagbar', 'order': 2 },
-\ }
-let g:tiler#master#size = 70
 
 "quickfix window
 nmap <leader>e  :cw<CR>
