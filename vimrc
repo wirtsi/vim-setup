@@ -171,7 +171,7 @@ nmap <leader>bq :bp <bar>bd! #<cr>
 nmap <leader><leader> :bp<cr>
 
 "nerdtree -> https://github.com/scrooloose/nerdtree
-map <Leader>n :NERDTreeToggle <bar> TilerResize 70<CR>
+map <Leader>n :NERDTreeToggle<cr>
 "show current file in nerdtree
 nmap <leader>l :NERDTreeFind<CR>
 "autocmd StdinReadPre * let s:std_in=1
