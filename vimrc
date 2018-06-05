@@ -1,11 +1,16 @@
 call plug#begin('~/.config/nvim/plugged')
-  Plug 'autozimu/LanguageClient-neovim', {
-  \ 'branch': 'next',
-  \ 'do': 'bash install.sh'
-  \ }
-  Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install; and composer run-script parse-stubs'}
-  Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  " Plug 'autozimu/LanguageClient-neovim', {
+  " \ 'branch': 'next',
+  " \ 'do': 'bash install.sh'
+  " \ }
+  " Plug 'roxma/nvim-completion-manager'
+  " Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install; and composer run-script parse-stubs'}
+  " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+  Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install'}
+  Plug 'kristijanhusak/deoplete-phpactor'
+  Plug 'arnaud-lb/vim-php-namespace', {'for': 'php'}
+  Plug 'StanAngeloff/php.vim', {'for': 'php'}
   Plug 'derekwyatt/vim-scala'
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
@@ -37,6 +42,7 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'pangloss/vim-javascript'
   Plug 'mxw/vim-jsx'
   Plug 'airblade/vim-rooter'
+  Plug 'SirVer/ultisnips'
 call plug#end()
 
 set encoding=utf-8
@@ -159,23 +165,18 @@ nmap <leader>9 <Plug>AirlineSelectTab9
 nmap <leader><left> <Plug>AirlineSelectPrevTab
 nmap <leader><right> <Plug>AirlineSelectNextTab
 
-"Allow creating new buffers with leader T and closing with leader bq
-nmap <leader>t :enew <bar> terminal<cr>
-nmap <leader>vt :vnew <bar> terminal<cr>
-nmap <leader>ht :new <bar> terminal<cr>
 "needs some massaging so vim doesnt focus a terminal after closing the buffer
 nmap <leader>bq :bp <bar>bd! #<cr>
-" <BAR>execute "normal \<Plug>AirlineSelectTab1"<cr>
 
 "Previous buffer with space space
-nmap <leader><leader> :bp<cr>
+nmap <tab> :bp<cr>
+nmap <s-tab> :bn<cr>
 
 "nerdtree -> https://github.com/scrooloose/nerdtree
 map <Leader>n :NERDTreeToggle<cr>
 "show current file in nerdtree
 nmap <leader>l :NERDTreeFind<CR>
-"autocmd StdinReadPre * let s:std_in=1
-"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
 let NERDTreeMapActivateNode='<right>'
 let NERDTreeShowHidden=0
 let loaded_netrwPlugin=1
@@ -192,6 +193,10 @@ let g:deoplete#enable_at_startup = 1
 " let b:deoplete_ignore_sources = ['buffer', 'neco-syntax']
 let g:deoplete#ignore_sources = get(g:, 'deoplete#ignore_sources', {})
 let g:deoplete#ignore_sources.php = ['omni']
+" cycle through menu items with tab/shift+tab
+inoremap <expr> <TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
+inoremap <expr> <s-tab> pumvisible() ? "\<c-p>" : "\<TAB>"
+
 "fugitive -> https://github.com/tpope/vim-fugitive
 
 "gitgutter -> https://github.com/airblade/vim-gitgutter
@@ -212,6 +217,7 @@ command! ProjectFiles execute 'Files' s:find_git_root()
 nnoremap <leader>f :ProjectFiles<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>r :History<cr>
+nnoremap <leader>t :Tags<cr>
 
 "Open the ripgrep in fzf-vim
 map <leader>s :Rg!<space>
@@ -305,7 +311,6 @@ let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
 "https://fortes.com/2017/language-server-neovim/
 let g:LanguageClient_serverCommands = {
 \ 'python' : ['/usr/local/bin/pyls'],
-\ 'php' : ['php', $HOME.'/php/language-server/vendor/bin/php-language-server.php'],
 \ 'javascript' : ['/usr/local/bin/javascript-typescript-stdio'],
 \ 'javascript.jsx' : ['/usr/local/bin/javascript-typescript-stdio']
 \}
@@ -320,10 +325,14 @@ else
   :cq
 endif
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> gr :call LanguageClient_textDocument_references()<CR>
+autocmd FileType php nnoremap map <buffer> gd :call phpactor#GotoDefinition()<CR>
+autocmd FileType javascript nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+autocmd FileType javascript.jsx nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> rn :call LanguageClient_textDocument_rename()<CR>
 nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
 nnoremap <silent> go :call LanguageClient_textDocument_documentSymbol()<CR>
+let g:LanguageClient_diagnosticsEnable  = 0
 
 "https://github.com/editorconfig/editorconfig-vim
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
@@ -347,3 +356,31 @@ let g:jsx_ext_required = 0
 "quickfix window
 nmap <leader>e  :cw<CR>
 nmap ge :cn<CR>
+
+" Generate ctags on save
+au BufWritePost *.php silent! !eval '[ -f ".git/hooks/ctags" ]; and .git/hooks/ctags' &
+
+"https://phpactor.github.io/phpactor/vim-plugin.html
+" Include use statement
+" nmap <Leader>us :call phpactor#UseAdd()<CR>
+
+" Invoke the context menu
+nmap <Leader>mm :call phpactor#ContextMenu()<CR>
+
+" Invoke the navigation menu
+nmap <Leader>nn :call phpactor#Navigate()<CR>
+
+" Goto definition of class or class member under the cursor
+nmap <Leader>o :call phpactor#GotoDefinition()<CR>
+
+" Transform the classes in the current file
+nmap <Leader>tt :call phpactor#Transform()<CR>
+
+" Generate a new class (replacing the current file)
+nmap <Leader>cc :call phpactor#ClassNew()<CR>
+
+" Extract method from selection
+vmap <silent><Leader>em :<C-U>call phpactor#ExtractMethod()<CR>
+
+" Vim rooter, shut up
+let g:rooter_silent_chdir = 1
