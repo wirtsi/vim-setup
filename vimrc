@@ -1,9 +1,9 @@
 call plug#begin('~/.config/nvim/plugged')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  " Plug 'autozimu/LanguageClient-neovim', {
-  " \ 'branch': 'next',
-  " \ 'do': 'bash install.sh'
-  " \ }
+  Plug 'autozimu/LanguageClient-neovim', {
+  \ 'branch': 'next',
+  \ 'do': 'bash install.sh'
+  \ }
   " Plug 'roxma/nvim-completion-manager'
   " Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install; and composer run-script parse-stubs'}
   " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
@@ -305,6 +305,7 @@ let g:ale_set_quickfix = 1
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
 let g:ale_sign_warning = '.'
 let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
+let g:ale_php_phpcs_standard = 'PSR2'
 
 "https://github.com/autozimu/LanguageClient-neovim
 "yarn global add javascript-typescript-langserver
@@ -326,7 +327,7 @@ else
 endif
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gr :call LanguageClient_textDocument_references()<CR>
-autocmd FileType php nnoremap map <buffer> gd :call phpactor#GotoDefinition()<CR>
+autocmd FileType php nnoremap <silent> gd :call phpactor#GotoDefinition()<CR>
 autocmd FileType javascript nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 autocmd FileType javascript.jsx nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> rn :call LanguageClient_textDocument_rename()<CR>
@@ -359,19 +360,16 @@ nmap ge :cn<CR>
 
 " Generate ctags on save
 au BufWritePost *.php silent! !eval '[ -f ".git/hooks/ctags" ]; and .git/hooks/ctags' &
-
+set tags+=.git/tags
 "https://phpactor.github.io/phpactor/vim-plugin.html
 " Include use statement
-" nmap <Leader>us :call phpactor#UseAdd()<CR>
+nmap <Leader>us :call phpactor#UseAdd()<CR>
 
 " Invoke the context menu
 nmap <Leader>mm :call phpactor#ContextMenu()<CR>
 
 " Invoke the navigation menu
 nmap <Leader>nn :call phpactor#Navigate()<CR>
-
-" Goto definition of class or class member under the cursor
-nmap <Leader>o :call phpactor#GotoDefinition()<CR>
 
 " Transform the classes in the current file
 nmap <Leader>tt :call phpactor#Transform()<CR>
@@ -382,5 +380,20 @@ nmap <Leader>cc :call phpactor#ClassNew()<CR>
 " Extract method from selection
 vmap <silent><Leader>em :<C-U>call phpactor#ExtractMethod()<CR>
 
+"https://github.com/arnaud-lb/vim-php-namespace
+function! IPhpInsertUse()
+    call PhpInsertUse()
+    call feedkeys('a',  'n')
+endfunction
+
+function! IPhpExpandClass()
+    call PhpExpandClass()
+    call feedkeys('a', 'n')
+endfunction
+
+autocmd FileType php inoremap <Leader>iu <Esc>:call IPhpInsertUse()<CR>
+autocmd FileType php noremap <Leader>iu :call PhpInsertUse()<CR>
+autocmd FileType php inoremap <Leader>ic <Esc>:call IPhpExpandClass()<CR>
+autocmd FileType php noremap <Leader>ic :call PhpExpandClass()<CR>
 " Vim rooter, shut up
 let g:rooter_silent_chdir = 1
