@@ -43,12 +43,15 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'mxw/vim-jsx'
   Plug 'airblade/vim-rooter'
   Plug 'SirVer/ultisnips'
+  Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins' }
 call plug#end()
 
 set encoding=utf-8
 scriptencoding utf-8
 set noshowmode
 set scrolloff=15
+set ruler
+set cursorline
 
 let g:python_host_prog = '/usr/local/bin/python2'
 let g:python3_host_prog = '/usr/local/bin/python3'
@@ -57,7 +60,7 @@ let g:python3_host_prog = '/usr/local/bin/python3'
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " Allow saving of files as sudo when I forgot to start vim using sudo.
-cmap w!! w !sudo tee > /dev/null %
+cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 "fzf integration
 set rtp+=/usr/local/opt/fzf
@@ -67,15 +70,6 @@ colorscheme base16-tomorrow-night
 "Here goes some neovim specific settings like
 if has("nvim")
   set termguicolors
-endif
-"Font is at https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Meslo/M
-if !has("gui_vimr")
-    "vimr doesn't like this
-    set guifont=MesloLGM\ Nerd\ Font\ RegularforPowerline:h14
-else
-    "Alt-right|left in vimr for buffer switches
-    nmap <A-Left>  <Plug>AirlineSelectPrevTab
-    nmap <A-Right> <Plug>AirlineSelectNextTab
 endif
 
 "Terminal Mode mapping. We dont want buffers insiide terminal windows
@@ -293,10 +287,6 @@ nmap <Leader>= :Tabularize /=<CR>
 vmap <Leader>= :Tabularize /=<CR>
 nmap <Leader>: :Tabularize /:<CR>
 vmap <Leader>: :Tabularize /:<CR>
-
-"vim-dispatch -> https://github.com/tpope/vim-dispatch
-"vim-dispatch doesn't like fish
-"set shell=/bin/bash
 
 "ale -> https://github.com/w0rp/ale
 " Write this in your vimrc file
