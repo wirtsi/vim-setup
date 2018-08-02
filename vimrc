@@ -43,7 +43,6 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'mxw/vim-jsx'
   Plug 'airblade/vim-rooter'
   Plug 'SirVer/ultisnips'
-  Plug 'ensime/ensime-vim', { 'do': ':UpdateRemotePlugins' }
 call plug#end()
 
 set encoding=utf-8
@@ -54,7 +53,7 @@ set ruler
 set cursorline
 
 let g:python_host_prog = '/usr/local/bin/python2'
-let g:python3_host_prog = '/usr/local/bin/python3'
+let g:python3_host_prog = '/Users/fkrause/.pyenv/shims/python'
 
 "fix yaml indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
@@ -387,3 +386,4 @@ autocmd FileType php inoremap <Leader>ic <Esc>:call IPhpExpandClass()<CR>
 autocmd FileType php noremap <Leader>ic :call PhpExpandClass()<CR>
 " Vim rooter, shut up
 let g:rooter_silent_chdir = 1
+
