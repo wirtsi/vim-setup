@@ -1,17 +1,17 @@
-call plug#begin('~/.config/nvim/plugged')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  call plug#begin('~/.config/nvim/plugged')
+  " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'autozimu/LanguageClient-neovim', {
   \ 'branch': 'next',
   \ 'do': 'bash install.sh'
   \ }
-  " Plug 'roxma/nvim-completion-manager'
-  " Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install; and composer run-script parse-stubs'}
-  " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
-  Plug 'phpactor/phpactor', {'for': 'php', 'do': 'composer install'}
-  Plug 'kristijanhusak/deoplete-phpactor'
+  Plug 'roxma/nvim-completion-manager'
+  Plug 'HerringtonDarkholme/yats.vim'
+  Plug 'mxw/vim-jsx'
+  Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install; and composer run-script parse-stubs'}
+  Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
   Plug 'arnaud-lb/vim-php-namespace', {'for': 'php'}
   Plug 'StanAngeloff/php.vim', {'for': 'php'}
-  Plug 'derekwyatt/vim-scala'
+  " Plug 'derekwyatt/vim-scala'
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -40,7 +40,6 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'pangloss/vim-javascript'
-  Plug 'mxw/vim-jsx'
   Plug 'airblade/vim-rooter'
   Plug 'SirVer/ultisnips'
 call plug#end()
@@ -161,7 +160,7 @@ nmap <leader><right> <Plug>AirlineSelectNextTab
 "needs some massaging so vim doesnt focus a terminal after closing the buffer
 nmap <leader>bq :bp <bar>bd! #<cr>
 
-"Previous buffer with space space
+"previous buffer with tab
 nmap <tab> :bp<cr>
 nmap <s-tab> :bn<cr>
 
@@ -181,14 +180,16 @@ autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>t <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
 
+"no longer use deoplete
 "deoplete -> https://github.com/Shougo/deoplete.nvim
 let g:deoplete#enable_at_startup = 1
 " let b:deoplete_ignore_sources = ['buffer', 'neco-syntax']
 let g:deoplete#ignore_sources = get(g:, 'deoplete#ignore_sources', {})
 let g:deoplete#ignore_sources.php = ['omni']
-" cycle through menu items with tab/shift+tab
-inoremap <expr> <TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
-inoremap <expr> <s-tab> pumvisible() ? "\<c-p>" : "\<TAB>"
+
+"cycle through menu items with tab/shift+tab
+inoremap <expr> <s-TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
+inoremap <expr> <TAB> pumvisible() ? "\<c-p>" : "\<TAB>"
 
 "fugitive -> https://github.com/tpope/vim-fugitive
 
@@ -302,7 +303,9 @@ let g:ale_php_phpcs_standard = 'PSR2'
 let g:LanguageClient_serverCommands = {
 \ 'python' : ['/usr/local/bin/pyls'],
 \ 'javascript' : ['/usr/local/bin/javascript-typescript-stdio'],
-\ 'javascript.jsx' : ['/usr/local/bin/javascript-typescript-stdio']
+\ 'javascript.jsx' : ['/usr/local/bin/javascript-typescript-stdio'],
+\ 'typescript' : ['/usr/local/bin/javascript-typescript-stdio'],
+\ 'typescriptreact' : ['/usr/local/bin/javascript-typescript-stdio']
 \}
 
 " Minimal LSP configuration for JavaScript
@@ -310,15 +313,16 @@ if executable('javascript-typescript-stdio')
   " Use LanguageServer for omnifunc completion
   autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
   autocmd FileType javascript.jsx setlocal omnifunc=LanguageClient#complete
+  autocmd FileType typescript setlocal omnifunc=LanguageClient#complete
+  autocmd FileType typescriptreact setlocal omnifunc=LanguageClient#complete
 else
   echo "javascript-typescript-stdio not installed!\n"
   :cq
 endif
+
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gr :call LanguageClient_textDocument_references()<CR>
-autocmd FileType php nnoremap <silent> gd :call phpactor#GotoDefinition()<CR>
-autocmd FileType javascript nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-autocmd FileType javascript.jsx nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> rn :call LanguageClient_textDocument_rename()<CR>
 nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
 nnoremap <silent> go :call LanguageClient_textDocument_documentSymbol()<CR>
@@ -348,26 +352,8 @@ nmap <leader>e  :cw<CR>
 nmap ge :cn<CR>
 
 " Generate ctags on save
-au BufWritePost *.php silent! !eval '[ -f ".git/hooks/ctags" ]; and .git/hooks/ctags' &
+au BufWritePost *.php silent! !eval '[ -f ".git/hooks/post-update" ]; and .git/hooks/post-update' &
 set tags+=.git/tags
-"https://phpactor.github.io/phpactor/vim-plugin.html
-" Include use statement
-nmap <Leader>us :call phpactor#UseAdd()<CR>
-
-" Invoke the context menu
-nmap <Leader>mm :call phpactor#ContextMenu()<CR>
-
-" Invoke the navigation menu
-nmap <Leader>nn :call phpactor#Navigate()<CR>
-
-" Transform the classes in the current file
-nmap <Leader>tt :call phpactor#Transform()<CR>
-
-" Generate a new class (replacing the current file)
-nmap <Leader>cc :call phpactor#ClassNew()<CR>
-
-" Extract method from selection
-vmap <silent><Leader>em :<C-U>call phpactor#ExtractMethod()<CR>
 
 "https://github.com/arnaud-lb/vim-php-namespace
 function! IPhpInsertUse()
@@ -384,6 +370,6 @@ autocmd FileType php inoremap <Leader>iu <Esc>:call IPhpInsertUse()<CR>
 autocmd FileType php noremap <Leader>iu :call PhpInsertUse()<CR>
 autocmd FileType php inoremap <Leader>ic <Esc>:call IPhpExpandClass()<CR>
 autocmd FileType php noremap <Leader>ic :call PhpExpandClass()<CR>
+
 " Vim rooter, shut up
 let g:rooter_silent_chdir = 1
-
