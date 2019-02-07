@@ -41,7 +41,7 @@
   Plug 'vim-airline/vim-airline-themes'
   Plug 'pangloss/vim-javascript'
   Plug 'airblade/vim-rooter'
-  Plug 'SirVer/ultisnips'
+  " Plug 'SirVer/ultisnips'
 call plug#end()
 
 set encoding=utf-8
@@ -180,13 +180,6 @@ autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>t <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
 
-"no longer use deoplete
-"deoplete -> https://github.com/Shougo/deoplete.nvim
-let g:deoplete#enable_at_startup = 1
-" let b:deoplete_ignore_sources = ['buffer', 'neco-syntax']
-let g:deoplete#ignore_sources = get(g:, 'deoplete#ignore_sources', {})
-let g:deoplete#ignore_sources.php = ['omni']
-
 "cycle through menu items with tab/shift+tab
 inoremap <expr> <s-TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
 inoremap <expr> <TAB> pumvisible() ? "\<c-p>" : "\<TAB>"
@@ -276,7 +269,7 @@ let g:rainbow_conf = {
 \}
 
 "dash -> https://github.com/rizzatti/dash.vim
-nmap <silent> <leader>d <Plug>DashSearch
+nmap <silent> <leader>i <Plug>DashSearch
 let g:dash_map = {
 \   'python' : 'tensorflow'
 \}
