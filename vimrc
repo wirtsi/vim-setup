@@ -1,17 +1,17 @@
-  call plug#begin('~/.config/nvim/plugged')
-  " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'autozimu/LanguageClient-neovim', {
-  \ 'branch': 'next',
-  \ 'do': 'bash install.sh'
-  \ }
-  Plug 'roxma/nvim-completion-manager'
+   call plug#begin('~/.config/nvim/plugged')
+  " Plug 'autozimu/LanguageClient-neovim', {
+  " \ 'branch': 'next',
+  " \ 'do': 'bash install.sh'
+  " \ }
+  " Plug 'roxma/nvim-completion-manager'
   Plug 'HerringtonDarkholme/yats.vim'
-  Plug 'mxw/vim-jsx'
-  Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install; and composer run-script parse-stubs'}
-  Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+  " Plug 'mxw/vim-jsx'
+  " Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install; and composer run-script parse-stubs'}
+  " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
   Plug 'arnaud-lb/vim-php-namespace', {'for': 'php'}
   Plug 'StanAngeloff/php.vim', {'for': 'php'}
   " Plug 'derekwyatt/vim-scala'
+  Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -39,9 +39,8 @@
   Plug 'tpope/vim-surround'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
-  Plug 'pangloss/vim-javascript'
+  Plug 'chemzqm/vim-jsx-improve'
   Plug 'airblade/vim-rooter'
-  " Plug 'SirVer/ultisnips'
 call plug#end()
 
 set encoding=utf-8
@@ -144,6 +143,9 @@ let g:airline#extensions#tabline#enabled = 2
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline#extensions#tabline#buffer_idx_mode = 1
 let g:airline_theme='base16_tomorrow'
+let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
+let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
+
 
 nmap <leader>1 <Plug>AirlineSelectTab1
 nmap <leader>2 <Plug>AirlineSelectTab2
@@ -161,8 +163,8 @@ nmap <leader><right> <Plug>AirlineSelectNextTab
 nmap <leader>bq :bp <bar>bd! #<cr>
 
 "previous buffer with tab
-nmap <tab> :bp<cr>
-nmap <s-tab> :bn<cr>
+" nmap <tab> :bp<cr>
+" nmap <s-tab> :bn<cr>
 
 "nerdtree -> https://github.com/scrooloose/nerdtree
 map <Leader>n :NERDTreeToggle<cr>
@@ -293,34 +295,38 @@ let g:ale_php_phpcs_standard = 'PSR2'
 "https://github.com/autozimu/LanguageClient-neovim
 "yarn global add javascript-typescript-langserver
 "https://fortes.com/2017/language-server-neovim/
-let g:LanguageClient_serverCommands = {
-\ 'python' : ['/usr/local/bin/pyls'],
-\ 'javascript' : ['/usr/local/bin/javascript-typescript-stdio'],
-\ 'javascript.jsx' : ['/usr/local/bin/javascript-typescript-stdio'],
-\ 'typescript' : ['/usr/local/bin/javascript-typescript-stdio'],
-\ 'typescriptreact' : ['/usr/local/bin/javascript-typescript-stdio']
-\}
+" let g:LanguageClient_serverCommands = {
+" \ 'python' : ['/usr/local/bin/pyls'],
+" \ 'javascript' : ['/usr/local/bin/javascript-typescript-stdio'],
+" \ 'javascript.jsx' : ['/usr/local/bin/javascript-typescript-stdio'],
+" \ 'typescript' : ['/usr/local/bin/javascript-typescript-stdio'],
+" \ 'typescriptreact' : ['/usr/local/bin/javascript-typescript-stdio']
+" \}
 
 " Minimal LSP configuration for JavaScript
-if executable('javascript-typescript-stdio')
-  " Use LanguageServer for omnifunc completion
-  autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
-  autocmd FileType javascript.jsx setlocal omnifunc=LanguageClient#complete
-  autocmd FileType typescript setlocal omnifunc=LanguageClient#complete
-  autocmd FileType typescriptreact setlocal omnifunc=LanguageClient#complete
-else
-  echo "javascript-typescript-stdio not installed!\n"
-  :cq
-endif
+" if executable('javascript-typescript-stdio')
+"   " Use LanguageServer for omnifunc completion
+"   autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
+"   autocmd FileType javascript.jsx setlocal omnifunc=LanguageClient#complete
+"   autocmd FileType typescript setlocal omnifunc=LanguageClient#complete
+"   autocmd FileType typescriptreact setlocal omnifunc=LanguageClient#complete
+" else
+"   echo "javascript-typescript-stdio not installed!\n"
+"   :cq
+" endif
 
-nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> gr :call LanguageClient_textDocument_references()<CR>
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> rn :call LanguageClient_textDocument_rename()<CR>
-nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
-nnoremap <silent> go :call LanguageClient_textDocument_documentSymbol()<CR>
-let g:LanguageClient_diagnosticsEnable  = 0
-
+" nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
+" nnoremap <silent> gr :call LanguageClient_textDocument_references()<CR>
+" nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+" nnoremap <silent> rn :call LanguageClient_textDocument_rename()<CR>
+" nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
+" nnoremap <silent> go :call LanguageClient_textDocument_documentSymbol()<CR>
+" let g:LanguageClient_diagnosticsEnable  = 0
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 "https://github.com/editorconfig/editorconfig-vim
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 
@@ -366,3 +372,62 @@ autocmd FileType php noremap <Leader>ic :call PhpExpandClass()<CR>
 
 " Vim rooter, shut up
 let g:rooter_silent_chdir = 1
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> for trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+" Use K for show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if &filetype == 'vim'
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+" Remap for format selected region
+" vmap <leader>f  <Plug>(coc-format-selected)
+" nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
+vmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap for do codeAction of current line
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Fix autofix problem of current line
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Use `:Format` for format current buffer
+command! -nargs=0 Format :call CocAction('format')
+
+" Use `:Fold` for fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
