@@ -1,15 +1,15 @@
-   call plug#begin('~/.config/nvim/plugged')
-  " Plug 'autozimu/LanguageClient-neovim', {
-  " \ 'branch': 'next',
-  " \ 'do': 'bash install.sh'
-  " \ }
-  " Plug 'roxma/nvim-completion-manager'
+function! BuildComposer(info)
+  if a:info.status != 'unchanged' || a:info.force
+    if has('nvim')
+      !cargo build --release
+    else
+      !cargo build --release --no-default-features --features json-rpc
+    endif
+  endif
+endfunction
+
+call plug#begin('~/.config/nvim/plugged')
   Plug 'HerringtonDarkholme/yats.vim'
-  " Plug 'mxw/vim-jsx'
-  " Plug 'roxma/LanguageServer-php-neovim',  {'do': 'composer install; and composer run-script parse-stubs'}
-  " Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
-  Plug 'arnaud-lb/vim-php-namespace', {'for': 'php'}
-  Plug 'StanAngeloff/php.vim', {'for': 'php'}
   " Plug 'derekwyatt/vim-scala'
   Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
   Plug 'junegunn/fzf.vim'
@@ -41,7 +41,10 @@
   Plug 'vim-airline/vim-airline-themes'
   Plug 'chemzqm/vim-jsx-improve'
   Plug 'airblade/vim-rooter'
+  Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 call plug#end()
+
+
 
 set encoding=utf-8
 scriptencoding utf-8
@@ -290,38 +293,8 @@ let g:ale_set_quickfix = 1
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
 let g:ale_sign_warning = '.'
 let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
-let g:ale_php_phpcs_standard = 'PSR2'
 
-"https://github.com/autozimu/LanguageClient-neovim
-"yarn global add javascript-typescript-langserver
-"https://fortes.com/2017/language-server-neovim/
-" let g:LanguageClient_serverCommands = {
-" \ 'python' : ['/usr/local/bin/pyls'],
-" \ 'javascript' : ['/usr/local/bin/javascript-typescript-stdio'],
-" \ 'javascript.jsx' : ['/usr/local/bin/javascript-typescript-stdio'],
-" \ 'typescript' : ['/usr/local/bin/javascript-typescript-stdio'],
-" \ 'typescriptreact' : ['/usr/local/bin/javascript-typescript-stdio']
-" \}
 
-" Minimal LSP configuration for JavaScript
-" if executable('javascript-typescript-stdio')
-"   " Use LanguageServer for omnifunc completion
-"   autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
-"   autocmd FileType javascript.jsx setlocal omnifunc=LanguageClient#complete
-"   autocmd FileType typescript setlocal omnifunc=LanguageClient#complete
-"   autocmd FileType typescriptreact setlocal omnifunc=LanguageClient#complete
-" else
-"   echo "javascript-typescript-stdio not installed!\n"
-"   :cq
-" endif
-
-" nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
-" nnoremap <silent> gr :call LanguageClient_textDocument_references()<CR>
-" nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-" nnoremap <silent> rn :call LanguageClient_textDocument_rename()<CR>
-" nnoremap <silent> ff :call LanguageClient_textDocument_formatting()<CR>
-" nnoremap <silent> go :call LanguageClient_textDocument_documentSymbol()<CR>
-" let g:LanguageClient_diagnosticsEnable  = 0
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
@@ -351,24 +324,9 @@ nmap <leader>e  :cw<CR>
 nmap ge :cn<CR>
 
 " Generate ctags on save
-au BufWritePost *.php silent! !eval '[ -f ".git/hooks/post-update" ]; and .git/hooks/post-update' &
+" au BufWritePost *.php silent! !eval '[ -f ".git/hooks/post-update" ]; and .git/hooks/post-update' &
 set tags+=.git/tags
 
-"https://github.com/arnaud-lb/vim-php-namespace
-function! IPhpInsertUse()
-    call PhpInsertUse()
-    call feedkeys('a',  'n')
-endfunction
-
-function! IPhpExpandClass()
-    call PhpExpandClass()
-    call feedkeys('a', 'n')
-endfunction
-
-autocmd FileType php inoremap <Leader>iu <Esc>:call IPhpInsertUse()<CR>
-autocmd FileType php noremap <Leader>iu :call PhpInsertUse()<CR>
-autocmd FileType php inoremap <Leader>ic <Esc>:call IPhpExpandClass()<CR>
-autocmd FileType php noremap <Leader>ic :call PhpExpandClass()<CR>
 
 " Vim rooter, shut up
 let g:rooter_silent_chdir = 1
