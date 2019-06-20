@@ -42,6 +42,9 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'chemzqm/vim-jsx-improve'
   Plug 'airblade/vim-rooter'
   Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+  Plug 'nvie/vim-flake8'
+  Plug 'prasantapal/rainbow_csv'
+  Plug 'hashivim/vim-terraform'
 call plug#end()
 
 
@@ -52,12 +55,14 @@ set noshowmode
 set scrolloff=15
 set ruler
 set cursorline
+set colorcolumn=80
 
-let g:python_host_prog = '/usr/local/bin/python2'
 let g:python3_host_prog = '/Users/fkrause/.pyenv/shims/python'
+let g:python_host_prog = '/usr/local/bin/python2'
 
 "fix yaml indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+autocmd FileType tf setlocal ts=2 sts=2 sw=2 expandtab
 
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
@@ -197,7 +202,7 @@ set fillchars+=vert:│
 
 "multi-cursor -> https://github.com/terryma/vim-multiple-cursors/
 "Ctrl-N
-
+let g:multi_cursor_exit_from_insert_mode = 0
 "fzf.vim -> https://github.com/junegunn/fzf.vim
 "find project root
 function! s:find_git_root()
@@ -388,4 +393,8 @@ command! -nargs=0 Format :call CocAction('format')
 
 " Use `:Fold` for fold current buffer
 command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" terraform stuff
+let g:terraform_align=1
+let g:terraform_fmt_on_save=1
 
