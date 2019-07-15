@@ -41,7 +41,6 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'airblade/vim-rooter'
-  Plug 'mhinz/vim-startify'
 
   " Langs
   Plug 'editorconfig/editorconfig-vim'
@@ -223,6 +222,12 @@ set fillchars+=vert:│
 "Ctrl-N
 let g:multi_cursor_exit_from_insert_mode = 0
 "fzf.vim -> https://github.com/junegunn/fzf.vim
+
+"find project root -> used in NerdTree
+function! s:find_git_root()
+  return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
+endfunction
+command! ProjectFiles execute 'Files' s:find_git_root()
 
 nnoremap <leader>f :ProjectFiles<cr>
 nnoremap <leader>b :Buffers<cr>
