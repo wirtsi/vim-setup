@@ -9,16 +9,48 @@ function! BuildComposer(info)
 endfunction
 
 call plug#begin('~/.config/nvim/plugged')
-  Plug 'HerringtonDarkholme/yats.vim'
-  " Plug 'derekwyatt/vim-scala'
+  " COC
   Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+  Plug 'neoclide/coc-jest', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc-java', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc-tslint', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
+
+  " UX
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'Xuyuanp/nerdtree-git-plugin'
-  Plug 'w0rp/ale'
   Plug 'rizzatti/dash.vim'
+  Plug 'whatyouhide/vim-gotham'
+  Plug 'ryanoasis/vim-devicons'
+  Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
   Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-dispatch'
+  if has('nvim')
+    " Adds neovim support to vim-dispatch
+    Plug 'radenling/vim-dispatch-neovim'
+  endif
+  Plug 'prasantapal/rainbow_csv'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+  Plug 'airblade/vim-rooter'
+  Plug 'mhinz/vim-startify'
+
+  " Langs
   Plug 'editorconfig/editorconfig-vim'
+  Plug 'sheerun/vim-polyglot', {'tag': 'v3.8.1'}
+  Plug 'nvie/vim-flake8'
+  Plug 'hashivim/vim-terraform'
+  Plug 'jparise/vim-graphql'
+
+  " Utils
   Plug 'machakann/vim-swap'
   Plug 'tpope/vim-commentary'
   Plug 'luochen1990/rainbow'
@@ -27,24 +59,9 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'matze/vim-move'
   Plug 'terryma/vim-multiple-cursors'
   Plug 'simnalamburt/vim-mundo'
-  Plug 'tpope/vim-dispatch'
-  if has('nvim')
-    " Adds neovim support to vim-dispatch
-    Plug 'radenling/vim-dispatch-neovim'
-  endif
   Plug 'Shougo/echodoc.vim'
   Plug 'easymotion/vim-easymotion'
-  Plug 'chriskempson/base16-vim'
-  Plug 'ryanoasis/vim-devicons'
   Plug 'tpope/vim-surround'
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
-  Plug 'chemzqm/vim-jsx-improve'
-  Plug 'airblade/vim-rooter'
-  Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
-  Plug 'nvie/vim-flake8'
-  Plug 'prasantapal/rainbow_csv'
-  Plug 'hashivim/vim-terraform'
 call plug#end()
 
 
@@ -70,12 +87,13 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 "fzf integration
 set rtp+=/usr/local/opt/fzf
 
-colorscheme base16-tomorrow-night
-
 "Here goes some neovim specific settings like
 if has("nvim")
   set termguicolors
 endif
+
+colorscheme gotham
+
 
 "Terminal Mode mapping. We dont want buffers insiide terminal windows
 if exists(':tnoremap')
@@ -150,7 +168,7 @@ let g:airline#extensions#tabline#enabled = 2
 " let g:airline#extensions#tabline#excludes = ["term://*"]
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='base16_tomorrow'
+let g:airline_theme='gotham'
 let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 
@@ -167,7 +185,7 @@ nmap <leader>9 <Plug>AirlineSelectTab9
 nmap <leader><left> <Plug>AirlineSelectPrevTab
 nmap <leader><right> <Plug>AirlineSelectNextTab
 
-"needs some massaging so vim doesnt focus a terminal after closing the buffer
+" Close a buffer
 nmap <leader>bq :bp <bar>bd! #<cr>
 
 "previous buffer with tab
@@ -189,6 +207,7 @@ let g:NERDTreeQuitOnOpen = 1
 autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>t <nop>
 autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
+autocmd FileType nerdtree noremap <buffer> <leader>f <nop>
 
 "cycle through menu items with tab/shift+tab
 inoremap <expr> <s-TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
@@ -204,12 +223,6 @@ set fillchars+=vert:│
 "Ctrl-N
 let g:multi_cursor_exit_from_insert_mode = 0
 "fzf.vim -> https://github.com/junegunn/fzf.vim
-"find project root
-function! s:find_git_root()
-  return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
-endfunction
-
-command! ProjectFiles execute 'Files' s:find_git_root()
 
 nnoremap <leader>f :ProjectFiles<cr>
 nnoremap <leader>b :Buffers<cr>
@@ -245,10 +258,10 @@ command! -bang -nargs=* Rg
 
 function! s:fzf_statusline()
   " Override statusline as you like
-  " highlight fzf1 ctermfg=161 ctermbg=251
-  " highlight fzf2 ctermfg=23 ctermbg=251
-  " highlight fzf3 ctermfg=237 ctermbg=251
-  " setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
+  highlight fzf1 ctermfg=161 ctermbg=251
+  highlight fzf2 ctermfg=23 ctermbg=251
+  highlight fzf3 ctermfg=237 ctermbg=251
+  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
 endfunction
 
 autocmd! User FzfStatusLine call <SID>fzf_statusline()
@@ -291,15 +304,6 @@ vmap <Leader>= :Tabularize /=<CR>
 nmap <Leader>: :Tabularize /:<CR>
 vmap <Leader>: :Tabularize /:<CR>
 
-"ale -> https://github.com/w0rp/ale
-" Write this in your vimrc file
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
-let g:ale_sign_error = '●' " Less aggressive than the default '>>'
-let g:ale_sign_warning = '.'
-let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
-
-
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
@@ -320,9 +324,6 @@ nnoremap <leader>u :MundoToggle<CR>
 
 "https://github.com/tpope/vim-surround
 "cs<old><new>" or ds<char>
-
-"jsx highlighting
-let g:jsx_ext_required = 0
 
 "quickfix window
 nmap <leader>e  :cw<CR>
