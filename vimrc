@@ -314,6 +314,9 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+
+nmap <silent> gE <Plug>(coc-diagnostic-prev)
+nmap <silent> ge <Plug>(coc-diagnostic-next)
 "https://github.com/editorconfig/editorconfig-vim
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 
@@ -331,8 +334,8 @@ nnoremap <leader>u :MundoToggle<CR>
 "cs<old><new>" or ds<char>
 
 "quickfix window
-nmap <leader>e  :cw<CR>
-nmap ge :cn<CR>
+" nmap <leader>e  :cw<CR>
+" nmap ge :cn<CR>
 
 " Generate ctags on save
 " au BufWritePost *.php silent! !eval '[ -f ".git/hooks/post-update" ]; and .git/hooks/post-update' &
