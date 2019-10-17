@@ -72,6 +72,7 @@ set scrolloff=15
 set ruler
 set cursorline
 set colorcolumn=80
+set signcolumn=yes
 
 let g:python3_host_prog = '/Users/fkrause/.pyenv/shims/python'
 let g:python_host_prog = '/usr/local/bin/python2'
