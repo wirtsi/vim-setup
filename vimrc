@@ -120,6 +120,7 @@ let mapleader=" "
 map <leader>rl :source ~/.config/nvim/vimrc<CR>
 set hidden
 set nowrap
+map <leader>w :set nowrap!<CR>
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
@@ -228,6 +229,7 @@ function! s:find_git_root()
   return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
 endfunction
 command! ProjectFiles execute 'Files' s:find_git_root()
+au BufEnter * if bufname('#') =~ 'NERD_tree' && bufname('%') !~ 'NERD_tree' && winnr('$') > 1 | b# | exe "normal! \<c-w>\<c-w>" | :blast | endif
 
 nnoremap <leader>f :ProjectFiles<cr>
 nnoremap <leader>b :Buffers<cr>
