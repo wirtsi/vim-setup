@@ -25,5 +25,6 @@
     "git.changeRemovedSign.hlGroup": "GitGutterChangeDelete",
     "git.branchCharacter": "",
     "git.addGlameToBufferVar": true,
-    "typescript.preferences.importModuleSpecifier": "relative"
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "tsserver.log": "verbose"
 }

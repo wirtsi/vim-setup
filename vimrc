@@ -29,6 +29,8 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'Xuyuanp/nerdtree-git-plugin'
   Plug 'rizzatti/dash.vim'
   Plug 'whatyouhide/vim-gotham'
+  Plug 'peitalin/vim-jsx-typescript'
+
   Plug 'ryanoasis/vim-devicons'
   Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
   Plug 'tpope/vim-fugitive'
@@ -202,7 +204,7 @@ let NERDTreeMapActivateNode='<right>'
 let NERDTreeShowHidden=0
 let loaded_netrwPlugin=1
 let NERDTreeRespectWildIgnore=1
-let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp','/target', 'node_modules', 'coverage', 'build']
+let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp','/target', 'node_modules', '/coverage', '/build']
 let g:NERDTreeQuitOnOpen = 1
 "disable some stuff in nerdtree window
 autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
