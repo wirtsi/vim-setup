@@ -224,7 +224,7 @@ endfunction
 command! ProjectFiles execute 'Files' s:find_git_root()
 au BufEnter * if bufname('#') =~ 'NERD_tree' && bufname('%') !~ 'NERD_tree' && winnr('$') > 1 | b# | exe "normal! \<c-w>\<c-w>" | :blast | endif
 
-nnoremap <leader>f :ProjectFiles<cr>
+nnoremap <leader>f :GFiles<cr>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>r :History<cr>
 nnoremap <leader>t :Tags<cr>
