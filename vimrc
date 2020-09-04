@@ -21,7 +21,9 @@ call plug#begin('~/.config/nvim/plugged')
   " Plug 'whatyouhide/vim-gotham'
   Plug 'arcticicestudio/nord-vim'
   Plug 'ryanoasis/vim-devicons'
-  Plug 'tpope/vim-fugitive'
+  " Plug 'tpope/vim-fugitive'
+  Plug 'kdheepak/lazygit.nvim', { 'branch': 'nvim-v0.4.3' }
+
   Plug 'tpope/vim-dispatch'
   if has('nvim')
     " Adds neovim support to vim-dispatch
@@ -230,7 +232,7 @@ nnoremap <leader>r :History<cr>
 nnoremap <leader>t :Tags<cr>
 
 "Open the ripgrep in fzf-vim
-map <leader>s :Rg!<space>
+map <leader>s :Rg! <C-r>"<space>
 let g:fzf_buffers_jump = 1
 " Augmenting Ag command using fzf#vim#with_preview function
 "   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
@@ -463,4 +465,7 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 " terraform stuff
 let g:terraform_align=1
 let g:terraform_fmt_on_save=1
+
+" lazygit
+nnoremap <silent> <leader>lg :LazyGit<CR>
 

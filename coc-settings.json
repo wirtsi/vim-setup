@@ -1,7 +1,7 @@
 {
     "languageserver": {
     },
-    "java.home": "/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home",
+    "java.home": "/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home/",
     "coc.preferences.diagnostic.errorSign": "",
     "coc.preferences.diagnostic.warningSign": "",
     "coc.preferences.diagnostic.infoSign": "",
