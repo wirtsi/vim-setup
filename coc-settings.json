@@ -1,7 +1,8 @@
 {
     "languageserver": {
     },
-    "java.home": "/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home/",
+    "java.home": "/usr/lib/jvm/java-11-openjdk-amd64",
+    "npm.binPath": "npm",
     "coc.preferences.diagnostic.errorSign": "",
     "coc.preferences.diagnostic.warningSign": "",
     "coc.preferences.diagnostic.infoSign": "",
