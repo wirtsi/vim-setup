@@ -1,6 +1,6 @@
 call plug#begin('~/.config/nvim/plugged')
   " COC
-  Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'neoclide/coc-jest', {'do': 'yarn install --frozen-lockfile'}
   Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile'}
   Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
@@ -21,7 +21,7 @@ call plug#begin('~/.config/nvim/plugged')
   " Plug 'whatyouhide/vim-gotham'
   Plug 'arcticicestudio/nord-vim'
   Plug 'ryanoasis/vim-devicons'
-  " Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-fugitive'
   Plug 'kdheepak/lazygit.nvim', { 'branch': 'nvim-v0.4.3' }
 
   Plug 'tpope/vim-dispatch'
@@ -78,7 +78,7 @@ autocmd FileType tf setlocal ts=2 sts=2 sw=2 expandtab
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 "fzf integration
-set rtp+=/usr/local/opt/fzf
+set rtp+=~/.fzf
 
 "Here goes some neovim specific settings like
 if has("nvim")
@@ -232,7 +232,7 @@ nnoremap <leader>r :History<cr>
 nnoremap <leader>t :Tags<cr>
 
 "Open the ripgrep in fzf-vim
-map <leader>s :Rg! <C-r>"<space>
+map <leader>s :Rg! <c-r>=expand("<cword>")<cr>
 let g:fzf_buffers_jump = 1
 " Augmenting Ag command using fzf#vim#with_preview function
 "   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
