@@ -1,17 +1,16 @@
 call plug#begin('~/.config/nvim/plugged')
   " COC
-  Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-  Plug 'neoclide/coc-jest', {'do': 'yarn install --frozen-lockfile'}
-  Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile'}
-  Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
-  Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile'}
-  Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
-  Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
-  Plug 'neoclide/coc-java', {'do': 'yarn install --frozen-lockfile'}
-  Plug 'neoclide/coc-tslint', {'do': 'yarn install --frozen-lockfile'}
-  Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
-  Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
-  Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'neoclide/coc-jest'
+  Plug 'neoclide/coc-highlight'
+  Plug 'neoclide/coc-lists'
+  Plug 'neoclide/coc-prettier'
+  Plug 'neoclide/coc-css'
+  Plug 'neoclide/coc-html'
+  Plug 'neoclide/coc-tsserver'
+  Plug 'neoclide/coc-json'
+  Plug 'neoclide/coc-eslint'
+  Plug 'fannheyward/coc-pyright'
 
   " UX
   Plug 'junegunn/fzf.vim'
@@ -21,7 +20,7 @@ call plug#begin('~/.config/nvim/plugged')
   " Plug 'whatyouhide/vim-gotham'
   Plug 'arcticicestudio/nord-vim'
   Plug 'ryanoasis/vim-devicons'
-  " Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-fugitive'
   Plug 'kdheepak/lazygit.nvim', { 'branch': 'nvim-v0.4.3' }
 
   Plug 'tpope/vim-dispatch'
@@ -36,15 +35,19 @@ call plug#begin('~/.config/nvim/plugged')
 
   " Langs
   Plug 'editorconfig/editorconfig-vim'
-  Plug 'sheerun/vim-polyglot', {'tag': 'v3.8.1'}
+  Plug 'sheerun/vim-polyglot'
   Plug 'nvie/vim-flake8'
   Plug 'hashivim/vim-terraform'
   Plug 'jparise/vim-graphql'
+  Plug 'peitalin/vim-jsx-typescript'
+  Plug 'jonsmithers/vim-html-template-literals'
+  Plug 'leafgarland/typescript-vim'
 
   " Utils
   Plug 'machakann/vim-swap'
   Plug 'tpope/vim-commentary'
-  Plug 'luochen1990/rainbow'
+  Plug 'frazrepo/vim-rainbow'
+
   Plug 'godlygeek/tabular'
   Plug 'airblade/vim-gitgutter'
   Plug 'matze/vim-move'
@@ -53,7 +56,6 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'Shougo/echodoc.vim'
   Plug 'easymotion/vim-easymotion'
   Plug 'tpope/vim-surround'
-  Plug 'peitalin/vim-jsx-typescript'
 call plug#end()
 
 
@@ -67,9 +69,6 @@ set cursorline
 set colorcolumn=80
 set signcolumn=yes
 
-let g:python3_host_prog = '/Users/fkrause/.pyenv/shims/python'
-let g:python_host_prog = '/usr/local/bin/python2'
-
 "fix yaml indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType tf setlocal ts=2 sts=2 sw=2 expandtab
@@ -78,7 +77,7 @@ autocmd FileType tf setlocal ts=2 sts=2 sw=2 expandtab
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 "fzf integration
-set rtp+=/usr/local/opt/fzf
+set rtp+=/opt/homebrew/opt/fzf
 
 "Here goes some neovim specific settings like
 if has("nvim")
@@ -89,19 +88,19 @@ colorscheme nord
 
 
 "Terminal Mode mapping. We dont want buffers insiide terminal windows
-if exists(':tnoremap')
-    autocmd TermOpen,BufEnter,BufLeave term://* setlocal nonumber norelativenumber statusline=%{b:term_title}
-    autocmd TermOpen term://* startinsert
-    autocmd BufLeave term://* stopinsert
-    autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
-    tnoremap <Esc> <C-\><C-n>
-    "fix standard windows commands in terminal mode
-    tmap <silent> <C-w><left> <C-\><C-n><C-w><left>
-    tmap <silent> <C-w><right> <C-\><C-n><C-w><right>
-    tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
-    tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
-    tmap <silent> <C-w>q <C-\><C-n><C-w>q
-endif
+"if exists(':tnoremap')
+"    autocmd TermOpen,BufEnter,BufLeave term://* setlocal nonumber norelativenumber statusline=%{b:term_title}
+"    autocmd TermOpen term://* startinsert
+"    autocmd BufLeave term://* stopinsert
+"    autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
+"    " tnoremap <Esc> <C-\><C-n>
+"    "fix standard windows commands in terminal mode
+"    tmap <silent> <C-w><left> <C-\><C-n><C-w><left>
+"    tmap <silent> <C-w><right> <C-\><C-n><C-w><right>
+"    tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
+"    tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
+"    tmap <silent> <C-w>q <C-\><C-n><C-w>q
+"endif
 
 "clipboard sharing with osx
 set clipboard=unnamed
@@ -218,6 +217,8 @@ set fillchars+=vert:│
 "Ctrl-N
 let g:multi_cursor_exit_from_insert_mode = 0
 "fzf.vim -> https://github.com/junegunn/fzf.vim
+let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --margin=1,4 --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
+let g:fzf_buffers_jump = 1
 
 "find project root -> used in NerdTree
 function! s:find_git_root()
@@ -232,31 +233,17 @@ nnoremap <leader>r :History<cr>
 nnoremap <leader>t :Tags<cr>
 
 "Open the ripgrep in fzf-vim
-map <leader>s :Rg! <C-r>"<space>
-let g:fzf_buffers_jump = 1
-" Augmenting Ag command using fzf#vim#with_preview function
-"   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
-"     * For syntax-highlighting, Ruby and any of the following tools are required:
-"       - Highlight: http://www.andre-simon.de/doku/highlight/en/highlight.php
-"       - CodeRay: http://coderay.rubychan.de/
-"       - Rouge: https://github.com/jneen/rouge
-"
-"   :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
-"   :Ag! - Start fzf in fullscreen and display the preview window above
-command! -bang -nargs=* Ag
-  \ call fzf#vim#ag(<q-args>,'--color-path 400 --color-line-number 400',
-  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \                 <bang>0)
+map <leader>s :RG!<space>
 
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
 
-" Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
-command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 function! s:fzf_statusline()
   " Override statusline as you like
@@ -267,31 +254,6 @@ function! s:fzf_statusline()
 endfunction
 
 autocmd! User FzfStatusLine call <SID>fzf_statusline()
-
-"rainbox_parenthesis -> https://github.com/luochen1990/rainbow
-let g:rainbow_active = 1
-let g:rainbow_conf = {
-\	'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
-\	'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
-\	'operators': '_,_',
-\	'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
-\	'separately': {
-\		'*': {},
-\		'tex': {
-\			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
-\		},
-\		'lisp': {
-\			'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
-\		},
-\		'vim': {
-\			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
-\		},
-\		'html': {
-\			'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
-\		},
-\		'css': 0,
-\	}
-\}
 
 "dash -> https://github.com/rizzatti/dash.vim
 nmap <silent> <leader>i <Plug>DashSearch
@@ -389,6 +351,9 @@ function! s:show_documentation()
   endif
 endfunction
 
+" Show signature help while editing
+autocmd CursorHoldI * silent! call CocActionAsync('showSignatureHelp')
+
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
@@ -442,7 +407,7 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+" set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings using CoCList:
 " Show all diagnostics.
@@ -468,4 +433,7 @@ let g:terraform_fmt_on_save=1
 
 " lazygit
 nnoremap <silent> <leader>lg :LazyGit<CR>
-
+ if has('nvim') && executable('nvr')
+  " pip3 install neovim-remote
+  let $GIT_EDITOR = "nvr --remote-wait +'set bufhidden=wipe'"
+endif
