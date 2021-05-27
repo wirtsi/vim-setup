@@ -7,7 +7,7 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'hrsh7th/nvim-compe'
 
 
-  " dependencies
+  " telescope dependencies
   Plug 'nvim-lua/popup.nvim'
   Plug 'nvim-lua/plenary.nvim'
   " telescope
@@ -18,7 +18,7 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'arcticicestudio/nord-vim'
   Plug 'kyazdani42/nvim-web-devicons'
   Plug 'tpope/vim-fugitive'
-  Plug 'kdheepak/lazygit.nvim', { 'branch': 'nvim-v0.4.3' }
+  Plug 'kdheepak/lazygit.nvim'
 
   Plug 'tpope/vim-dispatch'
   if has('nvim')
@@ -60,6 +60,7 @@ call plug#end()
 " autocomplete setup
 let g:compe = {}
 let g:compe.enabled = v:true
+let g:compe.documentation = v:true
 let g:compe.source = {
 \ 'path': v:true,
 \ 'buffer': v:true,
@@ -68,6 +69,8 @@ let g:compe.source = {
 
 " https://github.com/neovim/nvim-lspconfig
 "lsp setup
+
+
 lua << EOF
 local nvim_lsp = require('lspconfig')
 
@@ -94,19 +97,22 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  buf_set_keymap('n', 'gE', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', 'ge', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  -- buf_set_keymap("n", "<space>F", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "yamlls", "tsserver", "pyls" }
+local servers = { "yamlls", "tsserver", "pyright"}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 EOF
+
+" Close location after selection
+autocmd FileType qf nmap <buffer> <cr> <cr>:lcl<cr>
 
 
 lua << EOF
@@ -141,9 +147,6 @@ let g:indentLine_char = '⦙'
 
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
-
-"fzf integration
-" set rtp+=/usr/local/opt/fzf
 
 "Here goes some neovim specific settings like
 if has("nvim")
@@ -255,17 +258,22 @@ map <Leader>n <cmd>Telescope file_browser<cr>
 "show current file in nerdtree -- cannot be done in telescope
 " nmap <leader>l :NERDTreeFind<CR>
 nnoremap <leader>F <cmd>Telescope find_files<cr>
-nnoremap <leader>f <cmd>Telescope grep_string<cr>
+nnoremap <leader>f <cmd>Telescope git_files<cr>
 nnoremap <leader>b <cmd>Telescope buffers<cr>
 nnoremap <leader>r <cmd>Telescope oldfiles<cr>
 nnoremap <leader>t <cmd>Telescope help_tags<cr>
 
 "Open the ripgrep in telescope
 map <leader>s <cmd>Telescope live_grep<cr>
+map <leader>S <cmd>Telescope grep_string<cr>
 
 "cycle through menu items with tab/shift+tab
 inoremap <expr> <s-TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
 inoremap <expr> <TAB> pumvisible() ? "\<c-p>" : "\<TAB>"
+inoremap <expr> <down> pumvisible() ? "\<c-n>" : "\<down>"
+inoremap <expr> <up> pumvisible() ? "\<c-p>" : "\<up>"
+cnoremap <expr> <down> pumvisible() ? "\<c-n>" : "\<down>"
+cnoremap <expr> <up> pumvisible() ? "\<c-p>" : "\<up>"
 
 "fugitive -> https://github.com/tpope/vim-fugitive
 
@@ -307,10 +315,6 @@ nnoremap <leader>u :MundoToggle<CR>
 "https://github.com/tpope/vim-surround
 "cs<old><new>" or ds<char>
 
-"quickfix window
-" nmap <leader>e  :cw<CR>
-" nmap ge :cn<CR>
-
 " Generate ctags on save
 " au BufWritePost *.php silent! !eval '[ -f ".git/hooks/post-update" ]; and .git/hooks/post-update' &
 set tags+=.git/tags
@@ -329,3 +333,7 @@ nnoremap <silent> <leader>lg :LazyGit<CR>
   " pip3 install neovim-remote
   let $GIT_EDITOR = "nvr --remote-wait +'set bufhidden=wipe'"
 endif
+
+" At the end, some plugin overwrites these
+hi LspDiagnosticsDefaultError guifg=#E32636
+hi LspDiagnosticsDefaultWarning guifg=#FFBF00
