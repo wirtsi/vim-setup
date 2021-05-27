@@ -1,25 +1,22 @@
 call plug#begin('~/.config/nvim/plugged')
-  " COC
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  Plug 'neoclide/coc-jest'
-  Plug 'neoclide/coc-highlight'
-  Plug 'neoclide/coc-lists'
-  Plug 'neoclide/coc-prettier'
-  Plug 'neoclide/coc-css'
-  Plug 'neoclide/coc-html'
-  Plug 'neoclide/coc-tsserver'
-  Plug 'neoclide/coc-json'
-  Plug 'neoclide/coc-eslint'
-  Plug 'fannheyward/coc-pyright'
+
+  " v0.5 https://crispgm.com/page/neovim-is-overpowering.html
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  Plug 'nvim-treesitter/playground'
+  Plug 'neovim/nvim-lspconfig'
+  Plug 'hrsh7th/nvim-compe'
+
+
+  " dependencies
+  Plug 'nvim-lua/popup.nvim'
+  Plug 'nvim-lua/plenary.nvim'
+  " telescope
+  Plug 'nvim-telescope/telescope.nvim'
 
   " UX
-  Plug 'junegunn/fzf.vim'
-  Plug 'scrooloose/nerdtree'
-  Plug 'Xuyuanp/nerdtree-git-plugin'
   Plug 'rizzatti/dash.vim'
-  " Plug 'whatyouhide/vim-gotham'
   Plug 'arcticicestudio/nord-vim'
-  Plug 'ryanoasis/vim-devicons'
+  Plug 'kyazdani42/nvim-web-devicons'
   Plug 'tpope/vim-fugitive'
   Plug 'kdheepak/lazygit.nvim', { 'branch': 'nvim-v0.4.3' }
 
@@ -42,6 +39,7 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'peitalin/vim-jsx-typescript'
   Plug 'jonsmithers/vim-html-template-literals'
   Plug 'leafgarland/typescript-vim'
+  Plug 'stephpy/vim-yaml'
 
   " Utils
   Plug 'machakann/vim-swap'
@@ -58,7 +56,73 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'tpope/vim-surround'
 call plug#end()
 
+" https://github.com/hrsh7th/nvim-compe
+" autocomplete setup
+let g:compe = {}
+let g:compe.enabled = v:true
+let g:compe.source = {
+\ 'path': v:true,
+\ 'buffer': v:true,
+\ 'nvim_lsp': v:true,
+\ }
 
+" https://github.com/neovim/nvim-lspconfig
+"lsp setup
+lua << EOF
+local nvim_lsp = require('lspconfig')
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+end
+
+-- Use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+local servers = { "yamlls", "tsserver", "pyls" }
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup { on_attach = on_attach }
+end
+EOF
+
+
+lua << EOF
+local actions = require('telescope.actions')
+require('telescope').setup{
+  defaults = {
+    set_env = { ['COLORTERM'] = 'truecolor' },
+    color_devicons = true,
+    mappings = {
+      i = {
+        ["<esc>"] = actions.close
+      },
+    },
+  }
+}
+EOF
 
 set encoding=utf-8
 scriptencoding utf-8
@@ -68,16 +132,18 @@ set ruler
 set cursorline
 set colorcolumn=80
 set signcolumn=yes
+set completeopt=menuone,noselect
 
 "fix yaml indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType tf setlocal ts=2 sts=2 sw=2 expandtab
+let g:indentLine_char = '⦙'
 
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 "fzf integration
-set rtp+=~/.fzf
+" set rtp+=/usr/local/opt/fzf
 
 "Here goes some neovim specific settings like
 if has("nvim")
@@ -147,6 +213,8 @@ set splitbelow
 set splitright
 set mouse=a
 
+highlight link CompeDocumentation NormalFloat
+
 "disable highlighting with esc
 nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 
@@ -182,26 +250,18 @@ nmap <leader><right> <Plug>AirlineSelectNextTab
 " Close a buffer
 nmap <leader>bq :bp <bar>bd! #<cr>
 
-"previous buffer with tab
-" nmap <tab> :bp<cr>
-" nmap <s-tab> :bn<cr>
+"https://github.com/nvim-telescope/telescope.nvim#pickers
+map <Leader>n <cmd>Telescope file_browser<cr>
+"show current file in nerdtree -- cannot be done in telescope
+" nmap <leader>l :NERDTreeFind<CR>
+nnoremap <leader>F <cmd>Telescope find_files<cr>
+nnoremap <leader>f <cmd>Telescope grep_string<cr>
+nnoremap <leader>b <cmd>Telescope buffers<cr>
+nnoremap <leader>r <cmd>Telescope oldfiles<cr>
+nnoremap <leader>t <cmd>Telescope help_tags<cr>
 
-"nerdtree -> https://github.com/scrooloose/nerdtree
-map <Leader>n :NERDTreeToggle<cr>
-"show current file in nerdtree
-nmap <leader>l :NERDTreeFind<CR>
-
-let NERDTreeMapActivateNode='<right>'
-let NERDTreeShowHidden=0
-let loaded_netrwPlugin=1
-let NERDTreeRespectWildIgnore=1
-let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp','/target', 'node_modules', '/coverage', '/build']
-let g:NERDTreeQuitOnOpen = 1
-"disable some stuff in nerdtree window
-autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
-autocmd FileType nerdtree noremap <buffer> <leader>t <nop>
-autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
-autocmd FileType nerdtree noremap <buffer> <leader>f <nop>
+"Open the ripgrep in telescope
+map <leader>s <cmd>Telescope live_grep<cr>
 
 "cycle through menu items with tab/shift+tab
 inoremap <expr> <s-TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
@@ -216,44 +276,7 @@ set fillchars+=vert:│
 "multi-cursor -> https://github.com/terryma/vim-multiple-cursors/
 "Ctrl-N
 let g:multi_cursor_exit_from_insert_mode = 0
-"fzf.vim -> https://github.com/junegunn/fzf.vim
-let $FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --margin=1,4 --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
-let g:fzf_buffers_jump = 1
 
-"find project root -> used in NerdTree
-function! s:find_git_root()
-  return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
-endfunction
-command! ProjectFiles execute 'Files' s:find_git_root()
-au BufEnter * if bufname('#') =~ 'NERD_tree' && bufname('%') !~ 'NERD_tree' && winnr('$') > 1 | b# | exe "normal! \<c-w>\<c-w>" | :blast | endif
-
-nnoremap <leader>f :GFiles<cr>
-nnoremap <leader>b :Buffers<cr>
-nnoremap <leader>r :History<cr>
-nnoremap <leader>t :Tags<cr>
-
-"Open the ripgrep in fzf-vim
-map <leader>s :RG!<space>
-
-function! RipgrepFzf(query, fullscreen)
-  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
-  let initial_command = printf(command_fmt, shellescape(a:query))
-  let reload_command = printf(command_fmt, '{q}')
-  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
-endfunction
-
-command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
-
-function! s:fzf_statusline()
-  " Override statusline as you like
-  highlight fzf1 ctermfg=161 ctermbg=251
-  highlight fzf2 ctermfg=23 ctermbg=251
-  highlight fzf3 ctermfg=237 ctermbg=251
-  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
-endfunction
-
-autocmd! User FzfStatusLine call <SID>fzf_statusline()
 
 "dash -> https://github.com/rizzatti/dash.vim
 nmap <silent> <leader>i <Plug>DashSearch
@@ -268,14 +291,6 @@ vmap <Leader>= :Tabularize /=<CR>
 nmap <Leader>: :Tabularize /:<CR>
 vmap <Leader>: :Tabularize /:<CR>
 
-" Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-nmap <silent> gE <Plug>(coc-diagnostic-prev)
-nmap <silent> ge <Plug>(coc-diagnostic-next)
 "https://github.com/editorconfig/editorconfig-vim
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 
@@ -303,129 +318,6 @@ set tags+=.git/tags
 
 " Vim rooter, shut up
 let g:rooter_silent_chdir = 1
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-" position. Coc only does snippet and additional edit on confirm.
-if has('patch8.1.1068')
-  " Use `complete_info` if your (Neo)Vim version supports it.
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-else
-  imap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-endif
-
-" Use `[g` and `]g` to navigate diagnostics
-nmap <silent> gp <Plug>(coc-diagnostic-prev)
-nmap <silent> gn <Plug>(coc-diagnostic-next)
-
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" Show signature help while editing
-autocmd CursorHoldI * silent! call CocActionAsync('showSignatureHelp')
-
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
-
-" Formatting selected code.
-" xmap <leader>f  <Plug>(coc-format-selected)
-" nmap <leader>f  <Plug>(coc-format-selected)
-
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder.
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-
-" Applying codeAction to the selected region.
-" Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-" Remap keys for applying codeAction to the current line.
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-" Introduce function text object
-" NOTE: Requires 'textDocumnte.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap if <Plug>(coc-funcobj-i)
-omap af <Plug>(coc-funcobj-a)
-
-" Use <TAB> for selections ranges.
-" NOTE: Requires 'textDocument/selectionRange' support from the language server.
-" coc-tsserver, coc-python are the examples of servers that support it.
-nmap <silent> <S-TAB> <Plug>(coc-range-select)
-xmap <silent> <S-TAB> <Plug>(coc-range-select)
-
-" Add `:Format` command to format current buffer.
-command! -nargs=0 Format :call CocAction('format')
-
-" Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-" Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-" Add (Neo)Vim's native statusline support.
-" NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline.
-" set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-" Mappings using CoCList:
-" Show all diagnostics.
-" nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
-" " Manage extensions.
-" nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
-" " Show commands.
-" nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
-" " Find symbol of current document.
-" nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
-" " Search workspace symbols.
-" nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
-" " Do default action for next item.
-" nnoremap <silent> <space>j  :<C-u>CocNext<CR>
-" " Do default action for previous item.
-" nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
-" " Resume latest coc list.
-" nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
 " terraform stuff
 let g:terraform_align=1
