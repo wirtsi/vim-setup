@@ -13,6 +13,12 @@ call plug#begin('~/.config/nvim/plugged')
   " telescope
   Plug 'nvim-telescope/telescope.nvim'
 
+  " Fancy stuff
+  Plug 'folke/trouble.nvim'
+
+  " prettier
+  Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+
   " UX
   Plug 'rizzatti/dash.vim'
   Plug 'arcticicestudio/nord-vim'
@@ -69,8 +75,6 @@ let g:compe.source = {
 
 " https://github.com/neovim/nvim-lspconfig
 "lsp setup
-
-
 lua << EOF
 local nvim_lsp = require('lspconfig')
 
@@ -96,24 +100,18 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', 'gE', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', 'ge', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  -- buf_set_keymap("n", "<space>F", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  buf_set_keymap('n', '<space>E', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "yamlls", "tsserver", "pyright"}
+local servers = { "yamlls", "pyright", "tsserver"}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 EOF
-
-" Close location after selection
-autocmd FileType qf nmap <buffer> <cr> <cr>:lcl<cr>
-
 
 lua << EOF
 local actions = require('telescope.actions')
@@ -130,6 +128,40 @@ require('telescope').setup{
 }
 EOF
 
+lua << EOF
+  require("trouble").setup {
+  }
+EOF
+
+
+" eslint
+lua << EOF
+  local eslint = {
+    lintCommand = "./node_modules/.bin/eslint -f unix --stdin --stdin-filename ${INPUT}",
+    lintIgnoreExitCode = true,
+    lintStdin = true
+  }
+
+  local util = require "lspconfig".util
+
+  require "lspconfig".efm.setup {
+    --cmd = {"efm-langserver",},
+    init_options = {documentFormatting = false},
+    filetypes = {"javascript", "typescript", "typescriptreact"},
+    root_dir = function(fname)
+      return util.root_pattern("tsconfig.json")(fname) or
+      util.root_pattern(".eslintrc.js", ".git")(fname);
+    end,
+    settings = {
+      rootMarkers = {".eslintrc.js", ".git/"},
+      languages = {
+        typescript = {eslint}
+      }
+    }
+  }
+EOF
+
+
 set encoding=utf-8
 scriptencoding utf-8
 set noshowmode
@@ -145,8 +177,15 @@ autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType tf setlocal ts=2 sts=2 sw=2 expandtab
 let g:indentLine_char = '⦙'
 
+" autoformat with prettier
+let g:prettier#autoformat_config_present = 1
+let g:prettier#autoformat_require_pragma = 0
+
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+
+" Close location after selection
+autocmd FileType qf nmap <buffer> <cr> <cr>:lcl<cr>
 
 "Here goes some neovim specific settings like
 if has("nvim")
@@ -234,8 +273,8 @@ let g:airline#extensions#tabline#enabled = 2
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline#extensions#tabline#buffer_idx_mode = 1
 let g:airline_theme='nord'
-let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
-let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
+" let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
+" let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 
 
 nmap <leader>1 <Plug>AirlineSelectTab1
@@ -292,6 +331,8 @@ let g:dash_map = {
 \   'python' : 'tensorflow'
 \}
 
+" Show trouble error list
+map <leader>e <cmd>TroubleToggle<cr>
 
 "Auto align = or :
 nmap <Leader>= :Tabularize /=<CR>
