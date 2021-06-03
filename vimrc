@@ -16,6 +16,9 @@ call plug#begin('~/.config/nvim/plugged')
   " Fancy stuff
   Plug 'folke/trouble.nvim'
 
+  " Nerd
+  Plug 'preservim/nerdtree'
+
   " prettier
   Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
@@ -107,7 +110,7 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "yamlls", "pyright", "tsserver"}
+local servers = { "yamlls", "pyright", "tsserver", "phpactor"}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
@@ -160,7 +163,6 @@ lua << EOF
     }
   }
 EOF
-
 
 set encoding=utf-8
 scriptencoding utf-8
@@ -292,10 +294,15 @@ nmap <leader><right> <Plug>AirlineSelectNextTab
 " Close a buffer
 nmap <leader>bq :bp <bar>bd! #<cr>
 
+" disable some stuff in nerdtree window
+autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
+autocmd FileType nerdtree noremap <buffer> <leader>t <nop>
+autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
+autocmd FileType nerdtree noremap <buffer> <leader>f <nop>
+map <Leader>n :NERDTreeToggle<cr>
+nmap <leader>l :NERDTreeFind<CR>
+
 "https://github.com/nvim-telescope/telescope.nvim#pickers
-map <Leader>n <cmd>Telescope file_browser<cr>
-"show current file in nerdtree -- cannot be done in telescope
-" nmap <leader>l :NERDTreeFind<CR>
 nnoremap <leader>F <cmd>Telescope find_files<cr>
 nnoremap <leader>f <cmd>Telescope git_files<cr>
 nnoremap <leader>b <cmd>Telescope buffers<cr>
