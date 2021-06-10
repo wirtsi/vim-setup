@@ -13,18 +13,19 @@ call plug#begin('~/.config/nvim/plugged')
   " telescope
   Plug 'nvim-telescope/telescope.nvim'
 
-  " Fancy stuff
+  " Error handling
   Plug 'folke/trouble.nvim'
 
-  " Nerd
-  Plug 'preservim/nerdtree'
+  " Tree Folder View
+  Plug 'kyazdani42/nvim-tree.lua'
+
 
   " prettier
   Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
   " UX
   Plug 'rizzatti/dash.vim'
-  Plug 'arcticicestudio/nord-vim'
+  Plug 'shaunsingh/nord.nvim'
   Plug 'kyazdani42/nvim-web-devicons'
   Plug 'tpope/vim-fugitive'
   Plug 'kdheepak/lazygit.nvim'
@@ -37,7 +38,10 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'prasantapal/rainbow_csv'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
-  Plug 'airblade/vim-rooter'
+
+
+  Plug 'ahmedkhalf/lsp-rooter.nvim'
+
 
   " Langs
   Plug 'editorconfig/editorconfig-vim'
@@ -164,6 +168,15 @@ lua << EOF
   }
 EOF
 
+
+lua << EOF
+  require("lsp-rooter").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+EOF
+
 set encoding=utf-8
 scriptencoding utf-8
 set noshowmode
@@ -189,28 +202,9 @@ cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 " Close location after selection
 autocmd FileType qf nmap <buffer> <cr> <cr>:lcl<cr>
 
-"Here goes some neovim specific settings like
-if has("nvim")
-  set termguicolors
-endif
+set termguicolors
 
 colorscheme nord
-
-
-"Terminal Mode mapping. We dont want buffers insiide terminal windows
-"if exists(':tnoremap')
-"    autocmd TermOpen,BufEnter,BufLeave term://* setlocal nonumber norelativenumber statusline=%{b:term_title}
-"    autocmd TermOpen term://* startinsert
-"    autocmd BufLeave term://* stopinsert
-"    autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
-"    " tnoremap <Esc> <C-\><C-n>
-"    "fix standard windows commands in terminal mode
-"    tmap <silent> <C-w><left> <C-\><C-n><C-w><left>
-"    tmap <silent> <C-w><right> <C-\><C-n><C-w><right>
-"    tmap <silent> <C-w><up> <C-\><C-n><C-w><up>
-"    tmap <silent> <C-w><down> <C-\><C-n><C-w><down>
-"    tmap <silent> <C-w>q <C-\><C-n><C-w>q
-"endif
 
 "clipboard sharing with osx
 set clipboard=unnamed
@@ -271,36 +265,38 @@ let g:move_key_modifier = 'C'
 "airline -> https://github.com/vim-airline/vim-airline
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 2
-" let g:airline#extensions#tabline#excludes = ["term://*"]
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='nord'
-" let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
-" let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
+let g:airline_theme='nord_minimal'
+let g:airline#extensions#nvimlsp#enabled = 1
 
 
-nmap <leader>1 <Plug>AirlineSelectTab1
-nmap <leader>2 <Plug>AirlineSelectTab2
-nmap <leader>3 <Plug>AirlineSelectTab3
-nmap <leader>4 <Plug>AirlineSelectTab4
-nmap <leader>5 <Plug>AirlineSelectTab5
-nmap <leader>6 <Plug>AirlineSelectTab6
-nmap <leader>7 <Plug>AirlineSelectTab7
-nmap <leader>8 <Plug>AirlineSelectTab8
-nmap <leader>9 <Plug>AirlineSelectTab9
-nmap <leader><left> <Plug>AirlineSelectPrevTab
-nmap <leader><right> <Plug>AirlineSelectNextTab
+ nmap <leader>1 <Plug>AirlineSelectTab1
+ nmap <leader>2 <Plug>AirlineSelectTab2
+ nmap <leader>3 <Plug>AirlineSelectTab3
+ nmap <leader>4 <Plug>AirlineSelectTab4
+ nmap <leader>5 <Plug>AirlineSelectTab5
+ nmap <leader>6 <Plug>AirlineSelectTab6
+ nmap <leader>7 <Plug>AirlineSelectTab7
+ nmap <leader>8 <Plug>AirlineSelectTab8
+ nmap <leader>9 <Plug>AirlineSelectTab9
+ nmap <leader><left> <Plug>AirlineSelectPrevTab
+ nmap <leader><right> <Plug>AirlineSelectNextTab
 
 " Close a buffer
 nmap <leader>bq :bp <bar>bd! #<cr>
 
-" disable some stuff in nerdtree window
-autocmd FileType nerdtree noremap <buffer> <leader>b <nop>
-autocmd FileType nerdtree noremap <buffer> <leader>t <nop>
-autocmd FileType nerdtree noremap <buffer> <leader>r <nop>
-autocmd FileType nerdtree noremap <buffer> <leader>f <nop>
-map <Leader>n :NERDTreeToggle<cr>
-nmap <leader>l :NERDTreeFind<CR>
+
+" nvim-tree
+let g:nvim_tree_ignore = [ '.git', '.cache' ] "empty by default
+let g:nvim_tree_follow = 1
+let g:nvim_tree_indent_markers = 1
+let g:nvim_tree_width = 40
+let g:nvim_tree_auto_close = 1
+let g:nvim_tree_lsp_diagnostics = 1
+map <Leader>n :NvimTreeToggle<cr>
+nmap <leader>l :NvimTreeFindFile<CR>
+
 
 "https://github.com/nvim-telescope/telescope.nvim#pickers
 nnoremap <leader>F <cmd>Telescope find_files<cr>
