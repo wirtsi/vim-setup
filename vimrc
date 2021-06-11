@@ -1,3 +1,6 @@
+" set this for plugins here
+let mapleader=" "
+
 call plug#begin('~/.config/nvim/plugged')
 
   " v0.5 https://crispgm.com/page/neovim-is-overpowering.html
@@ -5,6 +8,7 @@ call plug#begin('~/.config/nvim/plugged')
   Plug 'nvim-treesitter/playground'
   Plug 'neovim/nvim-lspconfig'
   Plug 'hrsh7th/nvim-compe'
+  Plug 'ahmedkhalf/lsp-rooter.nvim'
 
 
   " telescope dependencies
@@ -36,12 +40,10 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'radenling/vim-dispatch-neovim'
   endif
   Plug 'prasantapal/rainbow_csv'
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
 
-
-  Plug 'ahmedkhalf/lsp-rooter.nvim'
-
+  " buffer & statusline
+  Plug 'akinsho/nvim-bufferline.lua'
+  Plug 'hoob3rt/lualine.nvim'
 
   " Langs
   Plug 'editorconfig/editorconfig-vim'
@@ -170,11 +172,224 @@ EOF
 
 
 lua << EOF
-  require("lsp-rooter").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
+  require("lsp-rooter").setup {}
+EOF
+
+lua << EOF
+  require("bufferline").setup{
+    options = {
+        show_buffer_icons = true,
+        diagnostics = "nvim_lsp",
+        mappings = true,
+        numbers = "ordinal"
+    }
   }
+EOF
+lua << EOF
+-- Eviline config for lualine
+-- Author: shadmansaleh
+-- Credit: glepnir
+local lualine = require 'lualine'
+
+-- Color table for highlights
+local colors = {
+  bg = '#374353',
+  fg = '#bbc2cf',
+  yellow = '#ECBE7B',
+  cyan = '#008080',
+  darkblue = '#081633',
+  green = '#8FBCBB',
+  orange = '#D08770',
+  violet = '#A3BE8C',
+  magenta = '#B48EAD',
+  blue = '#51afef',
+  red = '#ec5f67'
+}
+
+local conditions = {
+  buffer_not_empty = function() return vim.fn.empty(vim.fn.expand('%:t')) ~= 1 end,
+  hide_in_width = function() return vim.fn.winwidth(0) > 80 end,
+  check_git_workspace = function()
+    local filepath = vim.fn.expand('%:p:h')
+    local gitdir = vim.fn.finddir('.git', filepath .. ';')
+    return gitdir and #gitdir > 0 and #gitdir < #filepath
+  end
+}
+
+-- Config
+local config = {
+  options = {
+    -- Disable sections and component separators
+    component_separators = "",
+    section_separators = "",
+    theme = "nord"
+  },
+  sections = {
+    -- these are to remove the defaults
+    lualine_a = {},
+    lualine_b = {},
+    lualine_y = {},
+    lualine_z = {},
+    -- These will be filled later
+    lualine_c = {},
+    lualine_x = {}
+  },
+  inactive_sections = {
+    -- these are to remove the defaults
+    lualine_a = {},
+    lualine_v = {},
+    lualine_y = {},
+    lualine_z = {},
+    lualine_c = {},
+    lualine_x = {}
+  }
+}
+
+-- Inserts a component in lualine_c at left section
+local function ins_left(component)
+  table.insert(config.sections.lualine_c, component)
+end
+
+-- Inserts a component in lualine_x ot right section
+local function ins_right(component)
+  table.insert(config.sections.lualine_x, component)
+end
+
+ins_left {'filetype', colored = true}
+
+
+ins_left {
+  -- mode component
+  function()
+    -- auto change color according to neovims mode
+    local mode_color = {
+      n = colors.red,
+      i = colors.green,
+      v = colors.blue,
+      [''] = colors.blue,
+      V = colors.blue,
+      c = colors.magenta,
+      no = colors.red,
+      s = colors.orange,
+      S = colors.orange,
+      [''] = colors.orange,
+      ic = colors.yellow,
+      R = colors.violet,
+      Rv = colors.violet,
+      cv = colors.red,
+      ce = colors.red,
+      r = colors.cyan,
+      rm = colors.cyan,
+      ['r?'] = colors.cyan,
+      ['!'] = colors.red,
+      t = colors.red
+    }
+    vim.api.nvim_command(
+        'hi! LualineMode guifg=' .. mode_color[vim.fn.mode()] .. " guibg=" ..
+            colors.bg)
+    return ''
+  end,
+  color = "LualineMode",
+  left_padding = 0
+}
+
+ins_left {
+  -- filesize component
+  function()
+    local function format_file_size(file)
+      local size = vim.fn.getfsize(file)
+      if size <= 0 then return '' end
+      local sufixes = {'b', 'k', 'm', 'g'}
+      local i = 1
+      while size > 1024 do
+        size = size / 1024
+        i = i + 1
+      end
+      return string.format('%.1f%s', size, sufixes[i])
+    end
+    local file = vim.fn.expand('%:p')
+    if string.len(file) == 0 then return '' end
+    return format_file_size(file)
+  end,
+  condition = conditions.buffer_not_empty
+}
+
+ins_left {
+  'filename',
+  condition = conditions.buffer_not_empty,
+  color = {fg = colors.magenta, gui = 'bold'}
+}
+
+ins_left {'location'}
+
+ins_left {'progress', color = {fg = colors.fg, gui = 'bold'}}
+
+ins_left {
+  'diagnostics',
+  sources = {'nvim_lsp'},
+  symbols = {error = ' ', warn = ' ', info = ' '},
+  color_error = colors.red,
+  color_warn = colors.yellow,
+  color_info = colors.cyan
+}
+
+-- Insert mid section. You can make any number of sections in neovim :)
+-- for lualine it's any number greater then 2
+ins_left {function() return '%=' end}
+
+ins_left {
+  -- Lsp server name .
+  function()
+    local msg = 'No Active Lsp'
+    local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
+    local clients = vim.lsp.get_active_clients()
+    if next(clients) == nil then return msg end
+    for _, client in ipairs(clients) do
+      local filetypes = client.config.filetypes
+      if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
+        return client.name
+      end
+    end
+    return msg
+  end,
+  icon = ' LSP:',
+  color = {fg = '#ffffff', gui = 'bold'}
+}
+
+-- Add components to right sections
+ins_right {
+  'o:encoding', -- option component same as &encoding in viml
+  upper = true, -- I'm not sure why it's upper case either ;)
+  condition = conditions.hide_in_width,
+  color = {fg = colors.green, gui = 'bold'}
+}
+
+ins_right {
+  'fileformat',
+  upper = true,
+  icons_enabled = false, -- I think icons are cool but Eviline doesn't have them. sigh
+  color = {fg = colors.green, gui = 'bold'}
+}
+
+ins_right {
+  'branch',
+  icon = '',
+  condition = conditions.check_git_workspace,
+  color = {fg = colors.violet, gui = 'bold'}
+}
+
+ins_right {
+  'diff',
+  -- Is it me or the symbol for modified us really weird
+  symbols = {added = ' ', modified = '柳 ', removed = ' '},
+  color_added = colors.green,
+  color_modified = colors.orange,
+  color_removed = colors.red,
+  condition = conditions.hide_in_width
+}
+
+-- Now don't forget to initialize lualine
+lualine.setup(config)
 EOF
 
 set encoding=utf-8
@@ -212,7 +427,6 @@ set clipboard=unnamed
 set number
 set relativenumber
 syntax on
-let mapleader=" "
 "reload with Leader rl
 map <leader>rl :source ~/.config/nvim/vimrc<CR>
 set hidden
@@ -263,25 +477,8 @@ hi EndOfBuffer ctermbg=black ctermfg=black guibg=black guifg=black
 let g:move_key_modifier = 'C'
 
 "airline -> https://github.com/vim-airline/vim-airline
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 2
-let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline_theme='nord_minimal'
-let g:airline#extensions#nvimlsp#enabled = 1
-
-
- nmap <leader>1 <Plug>AirlineSelectTab1
- nmap <leader>2 <Plug>AirlineSelectTab2
- nmap <leader>3 <Plug>AirlineSelectTab3
- nmap <leader>4 <Plug>AirlineSelectTab4
- nmap <leader>5 <Plug>AirlineSelectTab5
- nmap <leader>6 <Plug>AirlineSelectTab6
- nmap <leader>7 <Plug>AirlineSelectTab7
- nmap <leader>8 <Plug>AirlineSelectTab8
- nmap <leader>9 <Plug>AirlineSelectTab9
- nmap <leader><left> <Plug>AirlineSelectPrevTab
- nmap <leader><right> <Plug>AirlineSelectNextTab
+nnoremap <silent><leader><left> :BufferLineCyclePrev<CR>
+nnoremap <silent><leader><right> :BufferLineCycleNext<CR>
 
 " Close a buffer
 nmap <leader>bq :bp <bar>bd! #<cr>
@@ -294,6 +491,7 @@ let g:nvim_tree_indent_markers = 1
 let g:nvim_tree_width = 40
 let g:nvim_tree_auto_close = 1
 let g:nvim_tree_lsp_diagnostics = 1
+let g:nvim_tree_update_cwd = 0
 map <Leader>n :NvimTreeToggle<cr>
 nmap <leader>l :NvimTreeFindFile<CR>
 
